@@ -45,6 +45,7 @@ class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        //TODO TextView 생성 변경
         TextView v = new TextView(parent.getContext());
         MyViewHolder viewHolder = new MyViewHolder(v);
         return viewHolder;
