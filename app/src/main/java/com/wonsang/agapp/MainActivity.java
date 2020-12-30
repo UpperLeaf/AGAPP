@@ -36,11 +36,6 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private static final String[] PERMISSIONS = {
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, pager2, (tab, position) -> {
             switch (position){
                 case ADDRESS_POSITION :
-                    tab.setText("ADDRESS");
+                    tab.setText("주소록");
                     break;
                 case GALLERY_POSITION :
-                    tab.setText("GALLERY");
+                    tab.setText("사진 갤러리");
                     break;
             }
             pager2.setCurrentItem(position);

@@ -56,7 +56,7 @@ public class GalleryFragment extends Fragment {
         Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
         //TODO Cursor Null Check
         while(cursor.moveToNext()){
-            Long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
             Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
             imageModels.add(new ImageModel(imageUri));
         }
@@ -76,7 +76,7 @@ public class GalleryFragment extends Fragment {
         @NonNull
         @Override
         public GalleryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.galllery_card, null);
+            View view = LayoutInflater.from(context).inflate(R.layout.galllery_card, parent,false);
             return new GalleryViewHolder(view);
         }
 
