@@ -16,7 +16,9 @@ public class PermissionActivity extends AppCompatActivity {
     private static final String[] PERMISSIONS = {
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_CONTACTS
+            Manifest.permission.WRITE_CONTACTS,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
     };
 
     @Override

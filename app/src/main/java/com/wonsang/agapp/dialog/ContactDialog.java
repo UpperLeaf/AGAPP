@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,9 +43,7 @@ public class ContactDialog extends Dialog {
 
         contactAddButton = findViewById(R.id.contact_add_button);
         contactAddButton.setOnClickListener((v) -> {
-
             ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-
             ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)

@@ -3,6 +3,7 @@ package com.wonsang.agapp.fragment;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -40,6 +41,8 @@ public class AddressFragment extends Fragment {
 
     private Button contactAddButton;
     private RecyclerView recyclerView;
+    private AddressAdapter adapter;
+
 
     @Nullable
     @Override
@@ -52,7 +55,9 @@ public class AddressFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.address_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(new AddressAdapter(getContext(), getAllUsers()));
+
+        adapter = new AddressAdapter(getContext(), getAllUsers());
+        recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
         contactAddButton = view.findViewById(R.id.submit);
@@ -62,7 +67,13 @@ public class AddressFragment extends Fragment {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow().setGravity(Gravity.CENTER);
             dialog.show();
+            dialog.setOnDismissListener(dialog1 -> notifyDataChanged());
         });
+    }
+
+    public void notifyDataChanged() {
+        adapter.users = getAllUsers();
+        adapter.notifyDataSetChanged();
     }
 
     private List<UserModel> getAllUsers() {

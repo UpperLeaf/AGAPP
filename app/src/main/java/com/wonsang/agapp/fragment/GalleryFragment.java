@@ -4,8 +4,10 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Camera;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.wonsang.agapp.MainActivity;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.model.ImageModel;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +37,10 @@ public class GalleryFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private Intent intent;
+    private GalleryAdapter adapter;
     private final String buttonName = "com.sec.android.app.camera";
+
+    public static final int CAMERA_INTENT_REQUEST_CODE = 100;
 
     @Nullable
     @Override
@@ -50,17 +55,15 @@ public class GalleryFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new GalleryAdapter(getAllImages(), getContext()));
+        adapter = new GalleryAdapter(getAllImages(), getContext());
+        recyclerView.setAdapter(adapter);
 
-        intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         Button cameraButton = (Button) getView().findViewById(R.id.cameraButton);
-        cameraButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                startActivity(intent);
-            }
+        cameraButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            getActivity().startActivityForResult(intent, CAMERA_INTENT_REQUEST_CODE);
         });
-
     }
 
     private List<ImageModel> getAllImages() {
@@ -78,6 +81,11 @@ public class GalleryFragment extends Fragment {
         }
         cursor.close();
         return imageModels;
+    }
+
+    public void notifyDataChanged() {
+        adapter.imageModels = getAllImages();
+        adapter.notifyDataSetChanged();
     }
 
     static class GalleryAdapter extends RecyclerView.Adapter<GalleryViewHolder>{
