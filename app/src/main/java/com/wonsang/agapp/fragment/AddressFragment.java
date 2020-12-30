@@ -25,7 +25,7 @@ import java.util.List;
 
 public class AddressFragment extends Fragment {
 
-    private RecyclerView user = null;
+    private RecyclerView recyclerView = null;
     private AddressAdapter adapter = null;
 
     @Nullable
@@ -37,14 +37,10 @@ public class AddressFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        this.user = view.findViewById(R.id.recycler);
-        this.adapter = new AddressAdapter(getAllUsers(), getContext());
-
-        user.setAdapter(adapter);
-        user.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-        adapter.notifyDataSetChanged();
+        recyclerView = view.findViewById(R.id.address_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setAdapter(new AddressAdapter(getContext(), getAllUsers()));
+        //adapter.notifyDataSetChanged();
     }
 
     private List<UserModel> getAllUsers() {
@@ -76,10 +72,10 @@ public class AddressFragment extends Fragment {
     }
 
     static class AddressAdapter extends RecyclerView.Adapter<AddressViewHolder> {
-        private List<UserModel> users = null;
+        private List<UserModel> users;
         private Context context;
 
-        AddressAdapter(List<UserModel> users, Context context){
+        AddressAdapter(Context context, List<UserModel> users){
             this.users = users;
             this.context = context;
         }
@@ -87,10 +83,7 @@ public class AddressFragment extends Fragment {
         @NonNull
         @Override
         public AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.my_text_view, null);
-//            ViewGroup.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            TextView textView = new TextView(context);
-//            textView.setLayoutParams(layoutParams);
+            View view = LayoutInflater.from(context).inflate(R.layout.address_card, null);
             return new AddressViewHolder(view);
         }
 
@@ -98,8 +91,8 @@ public class AddressFragment extends Fragment {
         public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
             UserModel user = users.get(position);
 
-            holder.name.setText(user.getName());
-            holder.phoneNumber.setText(user.getPhoneNumber().get(0));
+            holder.getName().setText(user.getName());
+            holder.getPhoneNumber().setText(user.getPhoneNumber().get(0));
         }
 
         @Override
@@ -110,13 +103,20 @@ public class AddressFragment extends Fragment {
     }
 
     static class AddressViewHolder extends RecyclerView.ViewHolder {
-        TextView name;
-        TextView phoneNumber;
+        private TextView name;
+        private TextView phoneNumber;
 
         public AddressViewHolder(@NonNull View view) {
             super(view);
             this.name = view.findViewById(R.id.name);
             this.phoneNumber = view.findViewById(R.id.phoneNumber);
+        }
+
+        public TextView getName() {
+            return name;
+        }
+        public TextView getPhoneNumber() {
+            return phoneNumber;
         }
 
     }

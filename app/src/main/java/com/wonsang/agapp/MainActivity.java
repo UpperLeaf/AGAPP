@@ -32,6 +32,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int GALLERY_POSITION = 1;
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private static final String[] PERMISSIONS = {
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -46,20 +56,8 @@ public class MainActivity extends AppCompatActivity {
         this.pager2.setAdapter(adapter);
 
         initializeTabLayout();
-        initializeGrant();
     }
 
-    private void initializeGrant() {
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
-        }
-
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, 100);
-        }
-
-        //TODO 권한 없을시 APP 종료
-    }
     private void initializeTabLayout() {
         new TabLayoutMediator(tabLayout, pager2, (tab, position) -> {
             switch (position){

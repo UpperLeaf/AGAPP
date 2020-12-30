@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AGApp</string>
     <string name="gallery_fragment_title">Gallery</string>
+    <string name="address_fragment_title">Address</string>
 </resources>

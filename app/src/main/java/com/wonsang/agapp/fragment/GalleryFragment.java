@@ -47,7 +47,6 @@ public class GalleryFragment extends Fragment {
         recyclerView.setAdapter(new GalleryAdapter(getAllImages(), getContext()));
     }
 
-
     private List<ImageModel> getAllImages() {
         List<ImageModel> imageModels = new ArrayList<>();
 
