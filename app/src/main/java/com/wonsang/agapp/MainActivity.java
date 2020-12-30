@@ -18,11 +18,13 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 import com.wonsang.agapp.fragment.AddressFragment;
 import com.wonsang.agapp.fragment.GalleryFragment;
+import com.wonsang.agapp.fragment.User;
 
 import org.w3c.dom.Text;
 
