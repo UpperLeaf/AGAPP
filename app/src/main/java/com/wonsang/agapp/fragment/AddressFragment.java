@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.wonsang.agapp.R;
+import com.wonsang.agapp.dialog.ContactDialog;
 import com.wonsang.agapp.model.UserModel;
 
 import java.util.ArrayList;
@@ -53,7 +57,11 @@ public class AddressFragment extends Fragment {
 
         contactAddButton = view.findViewById(R.id.submit);
         contactAddButton.setOnClickListener((View v) -> {
-
+            ContactDialog dialog = new ContactDialog(getContext());
+            dialog.setCancelable(true);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setGravity(Gravity.CENTER);
+            dialog.show();
         });
     }
 
