@@ -20,6 +20,7 @@
                 android:id="@+id/contact_image_wrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:elevation="10dp"
                 app:cardCornerRadius="10dp">
 
                 <ImageView
@@ -40,6 +41,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/name"
                     android:textSize="24sp"
+                    android:textStyle="bold"
                     android:textColor="@color/weak_black"/>
 
                 <TextView

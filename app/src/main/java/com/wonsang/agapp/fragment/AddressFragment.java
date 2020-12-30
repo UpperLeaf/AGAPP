@@ -14,6 +14,7 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import java.util.List;
 
 public class AddressFragment extends Fragment {
 
+    private Button contactAddButton;
     private RecyclerView recyclerView;
 
     @Nullable
@@ -48,6 +50,11 @@ public class AddressFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(new AddressAdapter(getContext(), getAllUsers()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+
+        contactAddButton = view.findViewById(R.id.submit);
+        contactAddButton.setOnClickListener((View v) -> {
+
+        });
     }
 
     private List<UserModel> getAllUsers() {

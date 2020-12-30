@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
         this.adapter.addFragment(new AddressFragment());
         this.adapter.addFragment(new GalleryFragment());
-
         this.pager2.setAdapter(adapter);
+
 
         initializeTabLayout();
     }
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         new TabLayoutMediator(tabLayout, pager2, (tab, position) -> {
             switch (position){
                 case ADDRESS_POSITION :
-                    tab.setText("주소록");
+                    tab.setText("연락처");
                     break;
                 case GALLERY_POSITION :
                     tab.setText("사진 갤러리");

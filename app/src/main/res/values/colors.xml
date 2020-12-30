@@ -8,4 +8,5 @@
     <color name="black">#FF000000</color>
     <color name="weak_black">#251E1E</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="tab_color">#7486E8</color>
 </resources>
