@@ -2,6 +2,7 @@ package com.wonsang.agapp.fragment;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.wonsang.agapp.MainActivity;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.model.ImageModel;
 
@@ -30,6 +34,8 @@ public class GalleryFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private Intent intent;
+    private final String buttonName = "com.sec.android.app.camera";
 
     @Nullable
     @Override
@@ -45,6 +51,16 @@ public class GalleryFragment extends Fragment {
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new GalleryAdapter(getAllImages(), getContext()));
+
+        intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Button cameraButton = (Button) getView().findViewById(R.id.cameraButton);
+        cameraButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                startActivity(intent);
+            }
+        });
+
     }
 
     private List<ImageModel> getAllImages() {
