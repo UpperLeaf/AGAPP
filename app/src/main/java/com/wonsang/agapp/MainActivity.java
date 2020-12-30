@@ -2,7 +2,10 @@ package com.wonsang.agapp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -12,9 +15,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.wonsang.agapp.fragment.AddressFragment;
 import com.wonsang.agapp.fragment.GalleryFragment;
 import com.wonsang.agapp.fragment.User;
@@ -37,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 pager2;
 
+    private static final int ADDRESS_POSITION = 0;
+    private static final int GALLERY_POSITION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,26 +65,28 @@ public class MainActivity extends AppCompatActivity {
         this.adapter.addFragment(new GalleryFragment());
 
         this.pager2.setAdapter(adapter);
+
         initializeTabLayout();
+        initializeGrant();
     }
 
-    public void initializeTabLayout() {
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int pos = tab.getPosition();
-                pager2.setCurrentItem(pos);
+    private void initializeGrant() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+        }
+    }
+    private void initializeTabLayout() {
+        new TabLayoutMediator(tabLayout, pager2, (tab, position) -> {
+            switch (position){
+                case ADDRESS_POSITION :
+                    tab.setText("ADDRESS");
+                    break;
+                case GALLERY_POSITION :
+                    tab.setText("GALLERY");
+                    break;
             }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                //Ignored
-            }
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                //Ignored
-            }
-        });
+            pager2.setCurrentItem(position);
+        }).attach();
     }
 
     public static class TabLayoutFragmentAdapter extends FragmentStateAdapter {
@@ -78,13 +95,13 @@ public class MainActivity extends AppCompatActivity {
 
         public TabLayoutFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
             super(fragmentManager, lifecycle);
-
             fragments = new ArrayList<>();
         }
 
         public void addFragment(Fragment fragment) {
             this.fragments.add(fragment);
         }
+
 
         @NonNull
         @Override
@@ -98,46 +115,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
-//class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
-//
-//    private String[] address;
-//
-//    MyAdapter(String[] address) {
-//        this.address = address;
-//    }
-//
-//    @NonNull
-//    @Override
-//    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        TextView v = new TextView(parent.getContext());
-//        MyViewHolder viewHolder = new MyViewHolder(v);
-//        return viewHolder;
-//    }
-//
-//    @Override
-//    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-//        TextView view = holder.getTextView();
-//        view.setText(address[position]);
-//    }
-//
-//    @Override
-//    public int getItemCount() {
-//        return address.length;
-//    }
-//
-//}
-//
-//class MyViewHolder extends RecyclerView.ViewHolder {
-//
-//    private TextView textView;
-//
-//    public TextView getTextView() {
-//        return textView;
-//    }
-//
-//    public MyViewHolder(@NonNull TextView itemView) {
-//        super(itemView);
-//        this.textView = itemView;
-//    }
-//}
