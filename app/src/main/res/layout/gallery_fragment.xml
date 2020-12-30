@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/gallery"
-        android:layout_width="wrap_content"
+        android:id="@+id/gallery_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This is Gallery Fragment">
-    </TextView>
+        android:textSize="30sp"
+        android:textStyle="italic|bold"
+        android:layout_margin="5dp"
+        android:textColor="@color/weak_black"
+        android:fontFamily="sans-serif"
+        android:text="@string/gallery_fragment_title" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gallery_recycler_view"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
