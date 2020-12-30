@@ -13,4 +13,16 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="AppCompatAlertDialogStyle" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_background_shadow</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="textViewFontStyle" parent="@android:style/Widget.DeviceDefault.TextView">
+        <item name="android:fontFamily">@font/nanumbarunpenr</item>
+    </style>
+    <style name="buttonFontStyle" parent="@android:style/Widget.DeviceDefault.Button.Borderless">
+        <item name="android:fontFamily">@font/nanumbarunpenr</item>
+    </style>
+
 </resources>
