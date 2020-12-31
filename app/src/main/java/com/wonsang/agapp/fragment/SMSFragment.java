@@ -37,86 +37,84 @@ public class SMSFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private GalleryAdapter adapter;
 
     public static final int CAMERA_INTENT_REQUEST_CODE = 100;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.gallery_fragment, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        recyclerView = view.findViewById(R.id.gallery_recycler_view);
-        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new GalleryAdapter(getAllImages(), getContext());
-        recyclerView.setAdapter(adapter);
-    }
-
-    private List<ImageModel> getAllImages() {
-        List<ImageModel> imageModels = new ArrayList<>();
-
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
-
-        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-        //TODO Cursor Null Check
-        while(cursor.moveToNext()){
-            long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-            Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-            imageModels.add(new ImageModel(imageUri));
-        }
-        cursor.close();
-        return imageModels;
-    }
-
-
-    static class GalleryAdapter extends RecyclerView.Adapter<GalleryViewHolder>{
-        private List<ImageModel> imageModels;
-        private Context context;
-
-        GalleryAdapter(List<ImageModel> imageModels, Context context) {
-            this.imageModels = imageModels;
-            this.context = context;
-        }
-
-        @NonNull
-        @Override
-        public GalleryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(context).inflate(R.layout.galllery_card, parent,false);
-            return new GalleryViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
-            ImageView imageView = holder.getImageView();
-            Glide.with(context)
-                    .load(imageModels.get(position).getPath())
-                    .centerCrop()
-                    .into(imageView);
-        }
-
-        @Override
-        public int getItemCount() {
-            return imageModels.size();
-        }
-    }
-
-    static class GalleryViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-
-        public GalleryViewHolder(@NonNull View view) {
-            super(view);
-            this.imageView = view.findViewById(R.id.gallery_imageView);
-        }
-
-        public ImageView getImageView() {
-            return imageView;
-        }
-    }
+//    @Nullable
+//    @Override
+//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        return inflater.inflate(R.layout.gallery_fragment, container, false);
+//    }
+//
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        recyclerView = view.findViewById(R.id.gallery_recycler_view);
+//        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+//
+//        recyclerView.setLayoutManager(layoutManager);
+//        adapter = new GalleryAdapter(getAllImages(), getContext());
+//        recyclerView.setAdapter(adapter);
+//    }
+//
+//    private List<ImageModel> getAllImages() {
+//        List<ImageModel> imageModels = new ArrayList<>();
+//
+//        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//        String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
+//
+//        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+//        //TODO Cursor Null Check
+//        while(cursor.moveToNext()){
+//            long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+//            Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+//            imageModels.add(new ImageModel(imageUri));
+//        }
+//        cursor.close();
+//        return imageModels;
+//    }
+//
+//
+//    static class GalleryAdapter extends RecyclerView.Adapter<GalleryViewHolder>{
+//        private List<ImageModel> imageModels;
+//        private Context context;
+//
+//        GalleryAdapter(List<ImageModel> imageModels, Context context) {
+//            this.imageModels = imageModels;
+//            this.context = context;
+//        }
+//
+//        @NonNull
+//        @Override
+//        public GalleryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//            View view = LayoutInflater.from(context).inflate(R.layout.galllery_card, parent,false);
+//            return new GalleryViewHolder(view);
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
+//            ImageView imageView = holder.getImageView();
+//            Glide.with(context)
+//                    .load(imageModels.get(position).getPath())
+//                    .centerCrop()
+//                    .into(imageView);
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return imageModels.size();
+//        }
+//    }
+//
+//    static class GalleryViewHolder extends RecyclerView.ViewHolder {
+//        ImageView imageView;
+//
+//        public GalleryViewHolder(@NonNull View view) {
+//            super(view);
+//        }
+//
+//        public ImageView getImageView() {
+//            return imageView;
+//        }
+//    }
 }

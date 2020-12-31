@@ -4,40 +4,29 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Camera;
-import android.media.Image;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.paging.PositionalDataSource;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.wonsang.agapp.MainActivity;
 import com.wonsang.agapp.R;
+import com.wonsang.agapp.listener.RecyclerViewScrollListener;
 import com.wonsang.agapp.model.ImageModel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class GalleryFragment extends Fragment {
 
@@ -47,8 +36,8 @@ public class GalleryFragment extends Fragment {
     private List<ImageModel> imageModels;
 
     public static final int CAMERA_INTENT_REQUEST_CODE = 100;
-
-
+    private final int PAGING_SIZE = 10;
+    private int size = 10;
 
     @Nullable
     @Override
@@ -70,11 +59,12 @@ public class GalleryFragment extends Fragment {
         recyclerView = view.findViewById(R.id.gallery_recycler_view);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addOnScrollListener(new RecyclerViewScrollListener(this));
     }
 
     private void initAdapter() {
         imageModels = getAllImages();
-        adapter = new GalleryAdapter(imageModels, getContext());
+        adapter = new GalleryAdapter(imageModels, getContext(), layoutManager);
         recyclerView.setAdapter(adapter);
     }
 
@@ -96,7 +86,7 @@ public class GalleryFragment extends Fragment {
 
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
-        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC");
+        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC limit " + size);
         //TODO Cursor Null Check
         while(cursor.moveToNext()){
             long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
@@ -112,16 +102,37 @@ public class GalleryFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    public boolean loadMoreData() {
+        size += PAGING_SIZE;
+        int beforeSize = imageModels.size();
+        List<ImageModel> data = getAllImages();
+
+        if(beforeSize == data.size())
+            return false;
+        else {
+            Toast.makeText(getContext(), "데이터 가져오는 중.", 500).show();
+            this.imageModels = data;
+            adapter.setImageModels(imageModels);
+            return true;
+        }
+    }
+
     static class GalleryAdapter extends RecyclerView.Adapter<GalleryViewHolder>{
         private List<ImageModel> imageModels;
         private Context context;
+        private RecyclerView.LayoutManager layoutManager;
         private final int CARD_IMAGE_NUMBER = 2;
 
-        GalleryAdapter(List<ImageModel> imageModels, Context context) {
+
+        GalleryAdapter(List<ImageModel> imageModels, Context context , RecyclerView.LayoutManager layoutManager) {
             this.imageModels = imageModels;
             this.context = context;
+            this.layoutManager = layoutManager;
         }
 
+        public void setImageModels(List<ImageModel> imageModels) {
+            this.imageModels = imageModels;
+        }
 
         @NonNull
         @Override
@@ -133,20 +144,23 @@ public class GalleryFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
             List<ImageView> imageViews = holder.getImageViews();
-
             for(int i = 0; i < CARD_IMAGE_NUMBER; i++){
                 if (imageModels.size() > position * CARD_IMAGE_NUMBER + i){
+                    imageViews.get(i).setVisibility(View.VISIBLE);
                     Glide.with(context)
                             .load(imageModels.get(position * CARD_IMAGE_NUMBER + i).getPath())
                             .centerCrop()
                             .into(imageViews.get(i));
+                }
+                else {
+                    imageViews.get(i).setVisibility(View.INVISIBLE);
                 }
             }
         }
 
         @Override
         public int getItemCount() {
-            return imageModels.size() / CARD_IMAGE_NUMBER + 1 ;
+            return (int)Math.ceil(imageModels.size() / (double)CARD_IMAGE_NUMBER);
         }
     }
 
