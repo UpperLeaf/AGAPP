@@ -2,4 +2,6 @@
     <string name="app_name">AGApp</string>
     <string name="gallery_fragment_title">사진 갤러리</string>
     <string name="address_fragment_title">연락처</string>
+    <string name="youtube_request_url">https://www.googleapis.com/youtube/v3/search?</string>
+    <string name="youtube_api_key">AIzaSyDIcrX7jZ8Xr-YYovHaBiMMnuHmwVVopXA</string>
 </resources>

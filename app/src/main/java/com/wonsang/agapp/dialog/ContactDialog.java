@@ -47,7 +47,7 @@ public class ContactDialog extends Dialog {
         setContentView(R.layout.contact_dialog);
 
         nameText = findViewById(R.id.contact_dialog_name);
-        EditText phoneNumberText = (EditText) findViewById(R.id.contact_dialog_phone);
+        phoneNumberText = (EditText) findViewById(R.id.contact_dialog_phone);
         phoneNumberText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         contactAddButton = findViewById(R.id.contact_add_button);

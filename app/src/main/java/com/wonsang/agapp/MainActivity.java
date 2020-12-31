@@ -3,37 +3,24 @@ package com.wonsang.agapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.wonsang.agapp.fragment.AddressFragment;
 import com.wonsang.agapp.fragment.GalleryFragment;
-import com.wonsang.agapp.fragment.SMSFragment;
+import com.wonsang.agapp.fragment.YoutubeFragment;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
     private GalleryFragment galleryFragment;
     private AddressFragment addressFragment;
-    private SMSFragment SMSFragment;
+    private YoutubeFragment youtubeFragment;
 
     private static final int ADDRESS_POSITION = 0;
     private static final int GALLERY_POSITION = 1;
-    private static final int SMS_POSITION = 2;
+    private static final int YOUTUBE_POSITION = 2;
 
 
     @Override
@@ -69,13 +56,13 @@ public class MainActivity extends AppCompatActivity {
 
         addressFragment = new AddressFragment();
         galleryFragment = new GalleryFragment();
-        SMSFragment = new SMSFragment();
+        youtubeFragment = new YoutubeFragment();
 
         this.adapter.addFragment(addressFragment);
         this.adapter.addFragment(galleryFragment);
-        this.adapter.addFragment(SMSFragment);
-        this.pager2.setAdapter(adapter);
+        this.adapter.addFragment(youtubeFragment);
 
+        this.pager2.setAdapter(adapter);
 
         initializeTabLayout();
     }
@@ -103,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 case GALLERY_POSITION :
                     tab.setText("사진 갤러리");
                     break;
-                case SMS_POSITION :
-                    tab.setText("SMS 전송");
+                case YOUTUBE_POSITION:
+                    tab.setText("Youtube");
                     break;
             }
         }).attach();
