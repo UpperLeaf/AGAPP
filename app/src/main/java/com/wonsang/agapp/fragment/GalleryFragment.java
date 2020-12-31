@@ -38,7 +38,6 @@ public class GalleryFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private GalleryAdapter adapter;
-    private final String buttonName = "com.sec.android.app.camera";
 
     public static final int CAMERA_INTENT_REQUEST_CODE = 100;
 

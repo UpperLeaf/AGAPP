@@ -26,6 +26,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.wonsang.agapp.fragment.AddressFragment;
 import com.wonsang.agapp.fragment.GalleryFragment;
+import com.wonsang.agapp.fragment.SMSFragment;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -45,9 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
     private GalleryFragment galleryFragment;
     private AddressFragment addressFragment;
+    private SMSFragment SMSFragment;
 
     private static final int ADDRESS_POSITION = 0;
     private static final int GALLERY_POSITION = 1;
+    private static final int SMS_POSITION = 2;
 
 
     @Override
@@ -66,9 +69,11 @@ public class MainActivity extends AppCompatActivity {
 
         addressFragment = new AddressFragment();
         galleryFragment = new GalleryFragment();
+        SMSFragment = new SMSFragment();
 
         this.adapter.addFragment(addressFragment);
         this.adapter.addFragment(galleryFragment);
+        this.adapter.addFragment(SMSFragment);
         this.pager2.setAdapter(adapter);
 
 
@@ -97,6 +102,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case GALLERY_POSITION :
                     tab.setText("사진 갤러리");
+                    break;
+                case SMS_POSITION :
+                    tab.setText("SMS 전송");
                     break;
             }
             pager2.setCurrentItem(position);

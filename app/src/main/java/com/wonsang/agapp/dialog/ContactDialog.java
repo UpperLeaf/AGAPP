@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.WindowManager;
@@ -39,7 +40,8 @@ public class ContactDialog extends Dialog {
         setContentView(R.layout.contact_dialog);
 
         nameText = findViewById(R.id.contact_dialog_name);
-        phoneNumberText = findViewById(R.id.contact_dialog_phone);
+        EditText phoneNumberText = (EditText) findViewById(R.id.contact_dialog_phone);
+        phoneNumberText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         contactAddButton = findViewById(R.id.contact_add_button);
         contactAddButton.setOnClickListener((v) -> {
