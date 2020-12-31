@@ -2,7 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/search_bar_color"
+            android:orientation="horizontal">
+            <ImageView
+                android:padding="3dp"
+                android:src="@drawable/search"
+                android:background="@color/search_bar_color"
+                android:layout_width="40dp"
+                android:layout_height="40dp">
+            </ImageView>
+            <EditText
+                android:id="@+id/search_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/search_bar_color"
+                android:textSize="25sp"
+                android:fontFamily="@font/nanumnarunpend"
+                android:textCursorDrawable="@color/black"
+                android:gravity="end|center"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="12dp"
+                android:maxLines="1">
+            </EditText>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/address_recycler_view"

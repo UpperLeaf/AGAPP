@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                     tab.setText("SMS 전송");
                     break;
             }
-            pager2.setCurrentItem(position);
         }).attach();
     }
 

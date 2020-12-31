@@ -14,11 +14,15 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,6 +43,7 @@ import java.util.List;
 
 public class AddressFragment extends Fragment {
 
+    private EditText editText;
     private Button contactAddButton;
     private RecyclerView recyclerView;
     private AddressAdapter adapter;
@@ -69,6 +74,19 @@ public class AddressFragment extends Fragment {
             dialog.show();
             dialog.setOnDismissListener(dialog1 -> notifyDataChanged());
         });
+        editText = view.findViewById(R.id.search_name);
+        editText.setOnKeyListener((v, keyCode, event) -> {
+            if(event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                EditText text = (EditText)v;
+                String name = text.getText().toString();
+                int position = adapter.searchPositionByName(name);
+                if(position != -1)
+                    recyclerView.smoothScrollToPosition(position);
+                return true;
+            }
+            return false;
+        });
+
     }
 
     public void notifyDataChanged() {
@@ -80,7 +98,7 @@ public class AddressFragment extends Fragment {
         List<UserModel> users = new ArrayList<>();
 
         ContentResolver resolver = getContext().getContentResolver();
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
 
         //TODO Cursor Null Check
         while(cursor.moveToNext()){
@@ -113,10 +131,12 @@ public class AddressFragment extends Fragment {
     }
 
     static class AddressAdapter extends RecyclerView.Adapter<AddressViewHolder> {
+        private List<AddressViewHolder> addressViewHolders;
         private List<UserModel> users;
         private Context context;
 
         AddressAdapter(Context context, List<UserModel> users){
+            this.addressViewHolders = new ArrayList<>();
             this.users = users;
             this.context = context;
         }
@@ -125,7 +145,9 @@ public class AddressFragment extends Fragment {
         @Override
         public AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(context).inflate(R.layout.address_card, parent, false);
-            return new AddressViewHolder(view);
+            AddressViewHolder viewHolder = new AddressViewHolder(view);
+            addressViewHolders.add(viewHolder);
+            return viewHolder;
         }
 
         @Override
@@ -145,6 +167,16 @@ public class AddressFragment extends Fragment {
             return users.size();
         }
 
+        public int searchPositionByName(String name) {
+            int position = -1;
+            for(int i = 0; i < addressViewHolders.size(); i++){
+                if(addressViewHolders.get(i).getUserName().contains(name)){
+                    position = i;
+                    break;
+                }
+            }
+            return position;
+        }
     }
 
     static class AddressViewHolder extends RecyclerView.ViewHolder {
@@ -167,6 +199,10 @@ public class AddressFragment extends Fragment {
         }
         public ImageView getImageView() {
             return imageView;
+        }
+
+        public String getUserName() {
+            return name.getText().toString();
         }
     }
 
