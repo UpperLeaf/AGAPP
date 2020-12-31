@@ -28,8 +28,15 @@ public class ContactDialog extends Dialog {
     private EditText phoneNumberText;
     private Button contactAddButton;
 
+    private boolean isFetched;
+
     public ContactDialog(@NonNull Context context) {
         super(context);
+        isFetched = false;
+    }
+
+    public boolean isFetched() {
+        return isFetched;
     }
 
     @Override
@@ -74,6 +81,7 @@ public class ContactDialog extends Dialog {
 
             try {
                 getContext().getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+                isFetched = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }

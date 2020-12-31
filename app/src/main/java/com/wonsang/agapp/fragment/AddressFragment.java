@@ -38,6 +38,7 @@ import com.wonsang.agapp.R;
 import com.wonsang.agapp.dialog.ContactDialog;
 import com.wonsang.agapp.model.UserModel;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +73,10 @@ public class AddressFragment extends Fragment {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow().setGravity(Gravity.CENTER);
             dialog.show();
-            dialog.setOnDismissListener(dialog1 -> notifyDataChanged());
+            dialog.setOnDismissListener(dialog1 -> {
+                if (dialog.isFetched())
+                    notifyDataChanged();
+            });
         });
         editText = view.findViewById(R.id.search_name);
         editText.setOnKeyListener((v, keyCode, event) -> {
