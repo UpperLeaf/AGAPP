@@ -37,15 +37,18 @@ import com.bumptech.glide.Glide;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.dialog.ContactDialog;
 import com.wonsang.agapp.model.UserModel;
+import com.wonsang.agapp.utils.ContentInfoProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AddressFragment extends Fragment {
 
     private EditText editText;
     private Button contactAddButton;
     private RecyclerView recyclerView;
+    private ContentInfoProvider contentInfoProvider;
     private AddressAdapter adapter;
 
     @Nullable
@@ -60,13 +63,15 @@ public class AddressFragment extends Fragment {
         recyclerView = view.findViewById(R.id.address_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        contentInfoProvider = new ContentInfoProvider();
         adapter = new AddressAdapter(getContext(), getAllUsers());
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
 
+
         contactAddButton = view.findViewById(R.id.submit);
         contactAddButton.setOnClickListener((View v) -> {
-            ContactDialog dialog = new ContactDialog(getContext());
+            ContactDialog dialog = new ContactDialog(getContext(), contentInfoProvider);
             dialog.setCancelable(true);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow().setGravity(Gravity.CENTER);
@@ -97,39 +102,7 @@ public class AddressFragment extends Fragment {
     }
 
     private List<UserModel> getAllUsers() {
-        List<UserModel> users = new ArrayList<>();
-
-        ContentResolver resolver = getContext().getContentResolver();
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
-
-        //TODO Cursor Null Check
-        while(cursor.moveToNext()){
-            long id = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
-            if(cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
-
-                Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
-                Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-
-                Cursor phoneNumCur = resolver
-                        .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
-
-                List<String> phoneNumbers = new ArrayList<>();
-                while (phoneNumCur.moveToNext()) {
-                    String phoneNo = phoneNumCur.getString(phoneNumCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    phoneNumbers.add(phoneNo);
-                }
-                users.add(new UserModel(name, phoneNumbers, photoUri));
-
-                Cursor imageCur = resolver.query(photoUri, new String[]{ContactsContract.Contacts.PHOTO_URI}, null, null, null);
-
-                phoneNumCur.close();
-                imageCur.close();
-            }
-        }
-        cursor.close();
-        return users;
+        return contentInfoProvider.getAllUsers(Objects.requireNonNull(getContext()).getContentResolver());
     }
 
     static class AddressAdapter extends RecyclerView.Adapter<AddressViewHolder> {

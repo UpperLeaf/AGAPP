@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.listener.RecyclerViewScrollListener;
 import com.wonsang.agapp.model.ImageModel;
+import com.wonsang.agapp.utils.ContentInfoProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class GalleryFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private ContentInfoProvider contentInfoProvider;
     private GalleryAdapter adapter;
     private List<ImageModel> imageModels;
 
@@ -49,8 +51,8 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        contentInfoProvider = new ContentInfoProvider();
         imageModels = getAllImages();
-
         initRecyclerView(view);
         initAdapter();
         initCamera(view);
@@ -65,7 +67,7 @@ public class GalleryFragment extends Fragment {
 
     private void initAdapter() {
         imageModels = getAllImages();
-        adapter = new GalleryAdapter(imageModels, getContext(), layoutManager);
+        adapter = new GalleryAdapter(imageModels, getContext());
         recyclerView.setAdapter(adapter);
     }
 
@@ -78,20 +80,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private List<ImageModel> getAllImages() {
-        List<ImageModel> imageModels = new ArrayList<>();
-
-        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
-        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC limit " + size);
-        //TODO Cursor Null Check
-        cursor.moveToPosition(size - PAGING_SIZE - 1);
-        while(cursor.moveToNext()){
-            long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
-            Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-            imageModels.add(new ImageModel(imageUri));
-        }
-        cursor.close();
-        return imageModels;
+        return contentInfoProvider.getImages(getContext().getContentResolver(), size, PAGING_SIZE);
     }
 
     public void notifyDataChanged() {
@@ -113,18 +102,11 @@ public class GalleryFragment extends Fragment {
     static class GalleryAdapter extends RecyclerView.Adapter<GalleryViewHolder>{
         private List<ImageModel> imageModels;
         private Context context;
-        private RecyclerView.LayoutManager layoutManager;
         private final int CARD_IMAGE_NUMBER = 2;
 
-
-        GalleryAdapter(List<ImageModel> imageModels, Context context , RecyclerView.LayoutManager layoutManager) {
+        GalleryAdapter(List<ImageModel> imageModels, Context context) {
             this.imageModels = imageModels;
             this.context = context;
-            this.layoutManager = layoutManager;
-        }
-
-        public void setImageModels(List<ImageModel> imageModels) {
-            this.imageModels = imageModels;
         }
 
         @NonNull
@@ -133,6 +115,7 @@ public class GalleryFragment extends Fragment {
             View view = LayoutInflater.from(context).inflate(R.layout.galllery_card, parent,false);
             return new GalleryViewHolder(view);
         }
+
 
         @Override
         public void onBindViewHolder(@NonNull GalleryViewHolder holder, int position) {
@@ -159,6 +142,7 @@ public class GalleryFragment extends Fragment {
 
     static class GalleryViewHolder extends RecyclerView.ViewHolder {
         List<ImageView> imageViews;
+
         public GalleryViewHolder(@NonNull View view) {
             super(view);
             imageViews = new ArrayList<>();

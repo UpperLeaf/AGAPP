@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.wonsang.agapp.R;
+import com.wonsang.agapp.utils.ContentInfoProvider;
 
 import java.util.ArrayList;
 
@@ -28,12 +29,14 @@ public class ContactDialog extends Dialog {
     private EditText nameText;
     private EditText phoneNumberText;
     private Button contactAddButton;
+    private ContentInfoProvider contentInfoProvider;
 
     private boolean isFetched;
 
-    public ContactDialog(@NonNull Context context) {
+    public ContactDialog(@NonNull Context context, ContentInfoProvider contentInfoProvider) {
         super(context);
         isFetched = false;
+        this.contentInfoProvider = contentInfoProvider;
     }
 
     public boolean isFetched() {
@@ -53,46 +56,14 @@ public class ContactDialog extends Dialog {
 
         contactAddButton = findViewById(R.id.contact_add_button);
         contactAddButton.setOnClickListener((v) -> {
-            ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-            ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
-                    .build());
-
             String name = nameText.getText().toString();
             String phoneNumber = phoneNumberText.getText().toString();
 
-            if(name.isEmpty() || phoneNumber.isEmpty()){
-                Toast.makeText(getContext(), "이름 또는 핸드폰 번호는 비어있을 수 없습니다.", Toast.LENGTH_SHORT).show();
-                return;
+            if(name.isEmpty() || phoneNumber.isEmpty()) {
+                Toast.makeText(getContext(), "이름이나 핸드폰 번호는 비어있을 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
-
-            ops.add(ContentProviderOperation
-                    .newInsert(ContactsContract.Data.CONTENT_URI)
-                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)
-                    .build());
-
-            ops.add(ContentProviderOperation.
-                    newInsert(ContactsContract.Data.CONTENT_URI)
-                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                    .withValue(ContactsContract.Data.MIMETYPE,
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                    .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
-                    .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
-                            ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
-                    .build());
-
-            try {
-                getContext().getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
-                isFetched = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            finally {
-                this.dismiss();
-            }
+            isFetched = contentInfoProvider.addContactInfo(getContext().getContentResolver(), name, phoneNumber);
+            dismiss();
         });
     }
 
