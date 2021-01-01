@@ -91,7 +91,7 @@ public class ContactDialog extends Dialog {
         });
     }
 
-    public void setWindowAsBehind() {
+    private void setWindowAsBehind() {
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount = 0.8f;
