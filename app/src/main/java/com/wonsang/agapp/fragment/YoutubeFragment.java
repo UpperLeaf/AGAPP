@@ -39,6 +39,7 @@ import com.wonsang.agapp.dao.YoutubeDatabase;
 import com.wonsang.agapp.dialog.ChannelInfoDialog;
 import com.wonsang.agapp.model.ImageModel;
 import com.wonsang.agapp.model.YoutubeData;
+import com.wonsang.agapp.observer.YoutubeDataManager;
 
 import org.w3c.dom.Text;
 
@@ -47,9 +48,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class YoutubeFragment extends Fragment {
+public class YoutubeFragment extends Fragment implements Observer {
 
     private SearchView searchView;
     private RecyclerView recyclerView;
@@ -67,21 +70,25 @@ public class YoutubeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         view.findViewById(R.id.search_view);
         searchView = view.findViewById(R.id.search_view);
-        this.youtubeDataProvider = new YoutubeDataProvider(getString(R.string.youtube_api_key), getContext(), this);
+        youtubeDataProvider = new YoutubeDataProvider(getString(R.string.youtube_api_key), getContext());
         searchView.setOnQueryTextListener(new SearchViewTextListener(youtubeDataProvider));
 
         recyclerView = view.findViewById(R.id.youtube_recycler_view);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(new YoutubeAdapter(getContext(), youtubeDataProvider));
+
+        YoutubeDataManager.getInstance().addObserver(this);
     }
 
-    public void notifySuccessDataFetched(List<YoutubeData> youtubeData) {
+    @Override
+    public void update(Observable o, Object org) {
+        String query = (String)org;
+        List<YoutubeData> youtubeData = youtubeDataProvider.findBySearchValue(query);
         YoutubeAdapter adapter = Objects.requireNonNull((YoutubeAdapter) recyclerView.getAdapter());
         adapter.youtubeData = youtubeData;
         adapter.notifyDataSetChanged();
     }
-
 
     static class SearchViewTextListener implements SearchView.OnQueryTextListener {
         private final YoutubeDataProvider dataProvider;
@@ -148,7 +155,6 @@ public class YoutubeFragment extends Fragment {
         private TextView publishedAt;
         private ImageView channelImage;
         private ImageView imageView;
-        private Context context;
         private ChannelButtonListener listener;
 
         public void setYoutubeData(YoutubeData data){
@@ -162,7 +168,6 @@ public class YoutubeFragment extends Fragment {
             this.publishedAt = itemView.findViewById(R.id.youtube_published_at);
             this.imageView = itemView.findViewById(R.id.youtube_preview);
             this.channelImage = itemView.findViewById(R.id.youtube_channel_image);
-            this.context = context;
             this.listener = new ChannelButtonListener(context);
             this.channelImage.setOnClickListener(listener);
         }

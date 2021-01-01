@@ -4,6 +4,7 @@ import com.android.volley.Response;
 import com.wonsang.agapp.YoutubeDataProvider;
 import com.wonsang.agapp.fragment.YoutubeFragment;
 import com.wonsang.agapp.model.YoutubeData;
+import com.wonsang.agapp.observer.YoutubeDataManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,12 +15,12 @@ import java.util.List;
 public class YoutubeChannelResponseListener implements Response.Listener<JSONObject> {
     private List<YoutubeData> youtubeDatas;
     private YoutubeDataProvider youtubeDataProvider;
-    private YoutubeFragment youtubeFragment;
+    private String query;
 
-    public YoutubeChannelResponseListener(YoutubeFragment youtubeFragment, YoutubeDataProvider youtubeDataProvider, List<YoutubeData> youtubeData) {
-        this.youtubeFragment = youtubeFragment;
+    public YoutubeChannelResponseListener(YoutubeDataProvider youtubeDataProvider, List<YoutubeData> youtubeData, String query) {
         this.youtubeDatas = youtubeData;
         this.youtubeDataProvider = youtubeDataProvider;
+        this.query = query;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class YoutubeChannelResponseListener implements Response.Listener<JSONObj
                 }
             }
             youtubeDataProvider.insertYoutubeDataAll(youtubeDatas);
-            youtubeFragment.notifySuccessDataFetched(youtubeDatas);
+            YoutubeDataManager.getInstance().notifyDataFetched(query);
         } catch (JSONException e) {
             e.printStackTrace();
         }

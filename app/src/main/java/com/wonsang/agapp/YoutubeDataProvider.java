@@ -14,6 +14,7 @@ import com.wonsang.agapp.fragment.YoutubeFragment;
 import com.wonsang.agapp.listener.YoutubeChannelResponseListener;
 import com.wonsang.agapp.listener.YoutubeDataResponseListener;
 import com.wonsang.agapp.model.YoutubeData;
+import com.wonsang.agapp.observer.YoutubeDataManager;
 
 
 import java.time.LocalDateTime;
@@ -23,16 +24,14 @@ public class YoutubeDataProvider {
 
     private final String apiKey;
     private final RequestQueue requestQueue;
-    private final YoutubeFragment youtubeFragment;
     private final YoutubeDataDao youtubeDataDao;
 
     private static final String channelRequestUrl = "https://www.googleapis.com/youtube/v3/channels?";
     private static final String searchRequestUrl = "https://www.googleapis.com/youtube/v3/search?";
 
-    public YoutubeDataProvider(String key, Context context, YoutubeFragment fragment) {
+    public YoutubeDataProvider(String key, Context context) {
         this.apiKey = key;
         this.requestQueue = Volley.newRequestQueue(context);
-        this.youtubeFragment = fragment;
         this.youtubeDataDao = YoutubeDatabase.getInstance(context).youtubeDataDao();
     }
 
@@ -69,10 +68,8 @@ public class YoutubeDataProvider {
             if(latest.getPublishedAt().isBefore(LocalDateTime.now().minusHours(1))){
                 requestData(query);
             }
-            else {
-                List<YoutubeData> youtubeData = youtubeDataDao.getAllBySearch(query);
-                youtubeFragment.notifySuccessDataFetched(youtubeData);
-            }
+            else
+                YoutubeDataManager.getInstance().notifyDataFetched(query);
         }
     }
 
@@ -88,7 +85,7 @@ public class YoutubeDataProvider {
         requestQueue.add(request);
     }
 
-    public List<YoutubeData> getAllChannelDataById(List<YoutubeData> youtubeData){
+    public List<YoutubeData> getAllChannelDataById(List<YoutubeData> youtubeData, String query){
         StringBuilder uri = createUrlBuilder(channelRequestUrl);
         uri.append("&id=");
         youtubeData.forEach((data) -> {
@@ -98,7 +95,7 @@ public class YoutubeDataProvider {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET, uri.toString(),
                 null,
-                new YoutubeChannelResponseListener(youtubeFragment,this, youtubeData),
+                new YoutubeChannelResponseListener(this, youtubeData, query),
                 new ErrorListener());
         requestQueue.add(request);
         return youtubeData;

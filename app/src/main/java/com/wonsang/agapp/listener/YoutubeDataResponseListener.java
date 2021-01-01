@@ -43,7 +43,7 @@ public class YoutubeDataResponseListener implements Response.Listener<JSONObject
                 youtubeData.setPublishedAt(LocalDateTime.now());
                 data.add(youtubeData);
             }
-            youtubeDataProvider.getAllChannelDataById(data);
+            youtubeDataProvider.getAllChannelDataById(data, query);
         }catch (JSONException e){
             e.printStackTrace();
         }
