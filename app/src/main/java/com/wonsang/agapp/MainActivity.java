@@ -39,11 +39,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int GALLERY_POSITION = 1;
     private static final int YOUTUBE_POSITION = 2;
 
+    private int beforeItem = 0;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+    @Override
+    public void onBackPressed() { }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         this.adapter.addFragment(youtubeFragment);
 
         this.pager2.setAdapter(adapter);
-
         initializeTabLayout();
     }
 
