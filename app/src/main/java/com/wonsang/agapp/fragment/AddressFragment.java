@@ -38,7 +38,6 @@ import com.wonsang.agapp.R;
 import com.wonsang.agapp.dialog.ContactDialog;
 import com.wonsang.agapp.model.UserModel;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +47,6 @@ public class AddressFragment extends Fragment {
     private Button contactAddButton;
     private RecyclerView recyclerView;
     private AddressAdapter adapter;
-
 
     @Nullable
     @Override

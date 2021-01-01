@@ -28,11 +28,14 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
 import com.wonsang.agapp.MainActivity;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.YoutubeDataProvider;
+import com.wonsang.agapp.dao.YoutubeDataDao;
+import com.wonsang.agapp.dao.YoutubeDatabase;
 import com.wonsang.agapp.dialog.ChannelInfoDialog;
 import com.wonsang.agapp.model.ImageModel;
 import com.wonsang.agapp.model.YoutubeData;
@@ -50,6 +53,7 @@ public class YoutubeFragment extends Fragment {
 
     private SearchView searchView;
     private RecyclerView recyclerView;
+    private YoutubeDataProvider youtubeDataProvider;
     private RecyclerView.LayoutManager layoutManager;
 
     @Nullable
@@ -63,23 +67,18 @@ public class YoutubeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         view.findViewById(R.id.search_view);
         searchView = view.findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchViewTextListener(getString(R.string.youtube_api_key), getContext(), this));
+        this.youtubeDataProvider = new YoutubeDataProvider(getString(R.string.youtube_api_key), getContext(), this);
+        searchView.setOnQueryTextListener(new SearchViewTextListener(youtubeDataProvider));
 
         recyclerView = view.findViewById(R.id.youtube_recycler_view);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new YoutubeAdapter(getContext()));
+        recyclerView.setAdapter(new YoutubeAdapter(getContext(), youtubeDataProvider));
     }
 
-    public void setYoutubeDataFetch(YoutubeData youtubeData) {
-        YoutubeAdapter adapter = Objects.requireNonNull((YoutubeAdapter)recyclerView.getAdapter());
-        adapter.youtubeData.add(youtubeData);
-        adapter.notifyItemInserted(adapter.youtubeData.size() -1);
-    }
-
-    public void notifySuccessDataFetched() {
+    public void notifySuccessDataFetched(List<YoutubeData> youtubeData) {
         YoutubeAdapter adapter = Objects.requireNonNull((YoutubeAdapter) recyclerView.getAdapter());
-        adapter.youtubeData.clear();
+        adapter.youtubeData = youtubeData;
         adapter.notifyDataSetChanged();
     }
 
@@ -87,8 +86,8 @@ public class YoutubeFragment extends Fragment {
     static class SearchViewTextListener implements SearchView.OnQueryTextListener {
         private final YoutubeDataProvider dataProvider;
 
-        SearchViewTextListener(String key, Context context, YoutubeFragment youtubeFragment) {
-            dataProvider = new YoutubeDataProvider(key, context, youtubeFragment);
+        SearchViewTextListener(YoutubeDataProvider youtubeDataProvider) {
+            dataProvider = youtubeDataProvider;
         }
 
         @Override
@@ -105,11 +104,18 @@ public class YoutubeFragment extends Fragment {
 
     static class YoutubeAdapter extends RecyclerView.Adapter<YoutubeViewHolder> {
         private List<YoutubeData> youtubeData;
+        private YoutubeDataProvider youtubeDataProvider;
         private Context context;
 
-        YoutubeAdapter(Context context) {
+        YoutubeAdapter(Context context, YoutubeDataProvider youtubeDataProvider) {
             this.context = context;
             this.youtubeData = new ArrayList<>();
+            this.youtubeDataProvider = youtubeDataProvider;
+
+            YoutubeData data = youtubeDataProvider.getLatestYoutubeData();
+            if (youtubeData != null) {
+                this.youtubeData = youtubeDataProvider.findBySearchValue(data.getSearchValue());
+            }
         }
 
         @NonNull
@@ -165,6 +171,7 @@ public class YoutubeFragment extends Fragment {
     static class ChannelButtonListener implements View.OnClickListener {
         private YoutubeData youtubeData;
         private Context context;
+
         ChannelButtonListener(Context context){
             this.context = context;
         }
