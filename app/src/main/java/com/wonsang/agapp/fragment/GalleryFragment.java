@@ -70,16 +70,11 @@ public class GalleryFragment extends Fragment {
     }
 
     private void initCamera(@NonNull View view) {
-        Button cameraButton = (Button) view.findViewById(R.id.cameraButton);
+        Button cameraButton = view.findViewById(R.id.cameraButton);
         cameraButton.setOnClickListener(v -> {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             getActivity().startActivityForResult(intent, CAMERA_INTENT_REQUEST_CODE);
         });
-    }
-
-
-    private List<ImageModel> getImages(int startPosition, int requestSize) {
-        return imageModels.subList(startPosition, startPosition + requestSize);
     }
 
     private List<ImageModel> getAllImages() {

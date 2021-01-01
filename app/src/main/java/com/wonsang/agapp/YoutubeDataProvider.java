@@ -11,14 +11,12 @@ import com.android.volley.toolbox.Volley;
 import com.wonsang.agapp.dao.YoutubeDataDao;
 import com.wonsang.agapp.dao.YoutubeDatabase;
 import com.wonsang.agapp.fragment.YoutubeFragment;
+import com.wonsang.agapp.listener.YoutubeChannelResponseListener;
+import com.wonsang.agapp.listener.YoutubeDataResponseListener;
 import com.wonsang.agapp.model.YoutubeData;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class YoutubeDataProvider {
@@ -82,7 +80,11 @@ public class YoutubeDataProvider {
         StringBuilder uri = createUrlBuilder(searchRequestUrl);
         uri.append("&q=" + query).append("&type=video");
         JsonObjectRequest request =
-                new JsonObjectRequest(Request.Method.GET, uri.toString(), null, new YoutubeDataResponseListener(youtubeFragment,this, query), new ErrorListener());
+                new JsonObjectRequest(Request.Method.GET,
+                        uri.toString(),
+                        null,
+                        new YoutubeDataResponseListener(this, query),
+                        new ErrorListener());
         requestQueue.add(request);
     }
 
@@ -93,87 +95,16 @@ public class YoutubeDataProvider {
             String channelId = data.getChannelId();
             uri.append(channelId + ",");
         });
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, uri.toString(), null, new YoutubeChannelResponseListener(youtubeFragment, this, youtubeData), new ErrorListener());
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET, uri.toString(),
+                null,
+                new YoutubeChannelResponseListener(youtubeFragment,this, youtubeData),
+                new ErrorListener());
         requestQueue.add(request);
         return youtubeData;
     }
 
-    static class YoutubeChannelResponseListener implements Response.Listener<JSONObject> {
-        private List<YoutubeData> youtubeDatas;
-        private YoutubeDataProvider youtubeDataProvider;
-        private YoutubeFragment youtubeFragment;
 
-        YoutubeChannelResponseListener(YoutubeFragment youtubeFragment, YoutubeDataProvider youtubeDataProvider, List<YoutubeData> youtubeData) {
-            this.youtubeFragment = youtubeFragment;
-            this.youtubeDatas = youtubeData;
-            this.youtubeDataProvider = youtubeDataProvider;
-        }
-
-        @Override
-        public void onResponse(JSONObject response) {
-            try {
-                JSONArray items = response.getJSONArray("items");
-                for(int i = 0; i < items.length(); i++) {
-                    JSONObject snippet = items.getJSONObject(i).getJSONObject("snippet");
-                    YoutubeData youtubeData;
-                    for(int j = 0; j < youtubeDatas.size(); j++){
-                        if(youtubeDatas.get(j).getChannelId().equals(items.getJSONObject(i).getString("id"))){
-                            youtubeData = youtubeDatas.get(j);
-                            youtubeData.setChannelDescription(snippet.getString("description"));
-                            youtubeData.setChannelPublishedAt(snippet.getString("publishedAt"));
-                            JSONObject thumbnails = snippet.getJSONObject("thumbnails");
-                            youtubeData.setChannelImageUrl(thumbnails.getJSONObject("medium").getString("url"));
-                        }
-                    }
-                }
-                youtubeDataProvider.insertYoutubeDataAll(youtubeDatas);
-                youtubeFragment.notifySuccessDataFetched(youtubeDatas);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    static class YoutubeDataResponseListener implements Response.Listener<JSONObject> {
-        private final YoutubeDataProvider youtubeDataProvider;
-        private final YoutubeFragment youtubeFragment;
-
-        private String query;
-
-        YoutubeDataResponseListener(YoutubeFragment youtubeFragment, YoutubeDataProvider youtubeDataProvider, String query){
-            this.youtubeDataProvider = youtubeDataProvider;
-            this.youtubeFragment = youtubeFragment;
-            this.query = query;
-
-        }
-
-        @Override
-        public void onResponse(JSONObject response){
-            List<YoutubeData> data = new ArrayList<>();
-            try {
-                JSONArray jsonArray = response.getJSONArray("items");
-                for(int i = 0; i < jsonArray.length(); i++){
-                    YoutubeData.Builder builder = new YoutubeData.Builder();
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    builder.videoId(jsonObject.getJSONObject("id").getString("videoId"));
-
-                    JSONObject snippet = jsonObject.getJSONObject("snippet");
-                    builder.publishedAt(snippet.getString("publishedAt"));
-                    builder.channelTitle(snippet.getString("channelTitle"));
-                    builder.channelId(snippet.getString("channelId"));
-                    builder.title(snippet.getString("title"));
-                    builder.description(snippet.getString("description"));
-                    builder.previewImageUrl(snippet.getJSONObject("thumbnails").getJSONObject("high").getString("url"));
-                    builder.searchValue(query);
-                    YoutubeData youtubeData = builder.build();
-                    youtubeData.setPublishedAt(LocalDateTime.now());
-                    data.add(youtubeData);
-                }
-                youtubeDataProvider.getAllChannelDataById(data);
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
-    }
     static class ErrorListener implements Response.ErrorListener {
         @Override
         public void onErrorResponse(VolleyError error) {
