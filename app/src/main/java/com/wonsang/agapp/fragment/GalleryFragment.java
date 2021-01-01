@@ -89,6 +89,7 @@ public class GalleryFragment extends Fragment {
         String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
         Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC limit " + size);
         //TODO Cursor Null Check
+        cursor.moveToPosition(size - PAGING_SIZE - 1);
         while(cursor.moveToNext()){
             long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
             Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
@@ -99,23 +100,19 @@ public class GalleryFragment extends Fragment {
     }
 
     public void notifyDataChanged() {
-        adapter.imageModels = getAllImages();
-        adapter.notifyDataSetChanged();
+        List<ImageModel> models = getAllImages();
+        int startPosition = adapter.imageModels.size();
+        adapter.imageModels.addAll(models);
+        adapter.notifyItemRangeInserted(startPosition, models.size());
     }
 
     public boolean loadMoreData() {
         size += PAGING_SIZE;
-        int beforeSize = imageModels.size();
         List<ImageModel> data = getAllImages();
-
-        if(beforeSize == data.size())
+        if(data.size() == 0)
             return false;
-        else {
-            Toast.makeText(getContext(), "데이터 가져오는 중.", 500).show();
-            this.imageModels = data;
-            adapter.setImageModels(imageModels);
-            return true;
-        }
+        Toast.makeText(getContext(), "데이터 가져오는 중.", Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     static class GalleryAdapter extends RecyclerView.Adapter<GalleryViewHolder>{

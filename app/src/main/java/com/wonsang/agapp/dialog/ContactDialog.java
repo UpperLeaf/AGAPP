@@ -15,6 +15,7 @@ import android.text.TextWatcher;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -57,10 +58,14 @@ public class ContactDialog extends Dialog {
                     .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
                     .build());
-            //TODO name, phonenumber isblank시에, Toast로 경고 메시지 처리
 
             String name = nameText.getText().toString();
             String phoneNumber = phoneNumberText.getText().toString();
+
+            if(name.isEmpty() || phoneNumber.isEmpty()){
+                Toast.makeText(getContext(), "이름 또는 핸드폰 번호는 비어있을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             ops.add(ContentProviderOperation
                     .newInsert(ContactsContract.Data.CONTENT_URI)

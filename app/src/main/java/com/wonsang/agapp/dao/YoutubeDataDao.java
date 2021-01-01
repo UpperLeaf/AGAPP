@@ -18,7 +18,7 @@ public interface YoutubeDataDao {
 
     @Query("SELECT * from youtube_data WHERE search_value = :search")
     List<YoutubeData> getAllBySearch(String search);
-    
+
     @Query("SELECT EXISTS(SELECT * from youtube_data WHERE search_value = :search)")
     Boolean isExist(String search);
 
