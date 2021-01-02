@@ -14,6 +14,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -38,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int ADDRESS_POSITION = 0;
     private static final int GALLERY_POSITION = 1;
     private static final int YOUTUBE_POSITION = 2;
-
-    private int beforeItem = 0;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

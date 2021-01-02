@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <kr.co.prnd.YouTubePlayerView
+        android:id="@+id/youtube_player_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </kr.co.prnd.YouTubePlayerView>
+
+    <TextView
+        android:id="@+id/player_video_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:paddingHorizontal="5dp"
+        android:paddingTop="10dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/nanumnarunpend">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="5dp"
+        android:paddingTop="20dp">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="10dp">
+            <ImageView
+                android:id="@+id/player_channel_image"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content">
+            </ImageView>
+        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/player_video_description"
+            android:fontFamily="@font/nanumbarunpenr"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:paddingHorizontal="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </TextView>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/player_video_published_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:fontFamily="@font/nanumbarunpenr"
+        android:paddingHorizontal="5dp"
+        android:textAlignment="textEnd">
+    </TextView>
+</LinearLayout>

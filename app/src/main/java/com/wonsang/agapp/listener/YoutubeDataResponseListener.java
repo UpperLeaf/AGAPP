@@ -40,7 +40,7 @@ public class YoutubeDataResponseListener implements Response.Listener<JSONObject
                 builder.previewImageUrl(snippet.getJSONObject("thumbnails").getJSONObject("high").getString("url"));
                 builder.searchValue(query);
                 YoutubeData youtubeData = builder.build();
-                youtubeData.setPublishedAt(LocalDateTime.now());
+                youtubeData.setColumnPublishedAt(LocalDateTime.now());
                 data.add(youtubeData);
             }
             youtubeDataProvider.getAllChannelDataById(data, query);

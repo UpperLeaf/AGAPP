@@ -1,5 +1,8 @@
 package com.wonsang.agapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
@@ -10,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Entity(tableName = "youtube_data", indices = {@Index(value = "video_id", unique = true)})
-public class YoutubeData {
+public class YoutubeData{
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -18,8 +21,11 @@ public class YoutubeData {
     @ColumnInfo(name = "search_value")
     private String searchValue;
 
-    @ColumnInfo(name = "column_published_at")
+    @ColumnInfo(name = "published_at")
     private LocalDateTime publishedAt;
+
+    @ColumnInfo(name = "column_published_at")
+    private LocalDateTime columnPublishedAt;
 
     @ColumnInfo(name = "video_id")
     private String videoId;
@@ -60,6 +66,9 @@ public class YoutubeData {
         this.searchValue = searchValue;
     }
 
+    public void setColumnPublishedAt(LocalDateTime now) {
+        this.columnPublishedAt = now;
+    }
     public void setChannelPublishedAt(String channelPublishedAt) {
         try {
             this.channelPublishedAt = LocalDateTime.parse(channelPublishedAt, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
@@ -67,7 +76,6 @@ public class YoutubeData {
             this.channelPublishedAt = LocalDateTime.parse(channelPublishedAt, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"));
         }
     }
-
     public void setChannelId(String channelId) {
         this.channelId = channelId;
     }
@@ -105,13 +113,15 @@ public class YoutubeData {
         this.searchValue = searchValue;
     }
 
+    public LocalDateTime getColumnPublishedAt() {
+        return columnPublishedAt;
+    }
     public long getId() {
         return id;
     }
     public String getSearchValue() {
         return searchValue;
     }
-
     public LocalDateTime getPublishedAt() {
         return publishedAt;
     }

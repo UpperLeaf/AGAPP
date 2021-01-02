@@ -65,9 +65,8 @@ public class YoutubeDataProvider {
         }
         else{
             YoutubeData latest = youtubeDataDao.getLatestBySearch(query);
-            if(latest.getPublishedAt().isBefore(LocalDateTime.now().minusHours(1))){
+            if(latest.getColumnPublishedAt().isBefore(LocalDateTime.now().minusHours(1)))
                 requestData(query);
-            }
             else
                 YoutubeDataManager.getInstance().notifyDataFetched(query);
         }

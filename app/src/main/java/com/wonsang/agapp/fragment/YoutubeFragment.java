@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.wonsang.agapp.MainActivity;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.YoutubeDataProvider;
+import com.wonsang.agapp.YoutubePlayerActivity;
 import com.wonsang.agapp.dao.YoutubeDataDao;
 import com.wonsang.agapp.dao.YoutubeDatabase;
 import com.wonsang.agapp.dialog.ChannelInfoDialog;
@@ -111,16 +112,13 @@ public class YoutubeFragment extends Fragment implements Observer {
 
     static class YoutubeAdapter extends RecyclerView.Adapter<YoutubeViewHolder> {
         private List<YoutubeData> youtubeData;
-        private YoutubeDataProvider youtubeDataProvider;
         private Context context;
 
         YoutubeAdapter(Context context, YoutubeDataProvider youtubeDataProvider) {
             this.context = context;
             this.youtubeData = new ArrayList<>();
-            this.youtubeDataProvider = youtubeDataProvider;
-
             YoutubeData data = youtubeDataProvider.getLatestYoutubeData();
-            if (youtubeData != null) {
+            if (data != null) {
                 this.youtubeData = youtubeDataProvider.findBySearchValue(data.getSearchValue());
             }
         }
@@ -141,6 +139,15 @@ public class YoutubeFragment extends Fragment implements Observer {
             holder.setYoutubeData(data);
             Glide.with(context).load(data.getPreviewImageUrl()).into(holder.imageView);
             Glide.with(context).load(data.getChannelImageUrl()).into(holder.channelImage);
+            holder.imageView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, YoutubePlayerActivity.class);
+                intent.putExtra("videoId", data.getVideoId());
+                intent.putExtra("publishedAt", data.getPublishedAt().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss")));
+                intent.putExtra("videoTitle", data.getTitle());
+                intent.putExtra("description", data.getDescription());
+                intent.putExtra("channelImageUrl", data.getChannelImageUrl());
+                context.startActivity(intent);
+            });
         }
 
         @Override

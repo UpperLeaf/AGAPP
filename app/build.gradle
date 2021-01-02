@@ -40,6 +40,7 @@ dependencies {
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'androidx.paging:paging-runtime:2.1.2'
+    implementation 'kr.co.prnd:youtube-player-view:1.4.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
