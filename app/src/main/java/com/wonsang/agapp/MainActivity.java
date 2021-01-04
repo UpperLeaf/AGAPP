@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() { }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == GalleryFragment.CAMERA_INTENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Bitmap photo= (Bitmap)data.getExtras().get("data");
             saveImage(photo);
-            galleryFragment.notifyDataChanged();
+            galleryFragment.notifyItemInserted();
         }
     }
 

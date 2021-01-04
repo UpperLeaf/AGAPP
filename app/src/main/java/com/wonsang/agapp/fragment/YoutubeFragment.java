@@ -85,7 +85,7 @@ public class YoutubeFragment extends Fragment implements Observer {
     @Override
     public void update(Observable o, Object org) {
         String query = (String)org;
-        List<YoutubeData> youtubeData = youtubeDataProvider.findBySearchValue(query);
+        List<YoutubeData> youtubeData = youtubeDataProvider.findAllContainsTitle(query);
         YoutubeAdapter adapter = Objects.requireNonNull((YoutubeAdapter) recyclerView.getAdapter());
         adapter.youtubeData = youtubeData;
         adapter.notifyDataSetChanged();

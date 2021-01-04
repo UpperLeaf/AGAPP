@@ -66,6 +66,22 @@ public class ContentInfoProvider {
         return imageModels;
     }
 
+    public List<ImageModel> getAllImages(ContentResolver resolver) {
+        List<ImageModel> imageModels = new ArrayList<>();
+
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
+        Cursor cursor = resolver.query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC");
+
+        while(cursor.moveToNext()){
+            long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+            imageModels.add(new ImageModel(imageUri));
+        }
+        cursor.close();
+        return imageModels;
+    }
+
     public boolean addContactInfo(ContentResolver resolver, String name ,String phoneNumber) {
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)

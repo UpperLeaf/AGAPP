@@ -1,12 +1,9 @@
 package com.wonsang.agapp.fragment;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
+import android.media.Image;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,11 +45,11 @@ public class GalleryFragment extends Fragment {
         return inflater.inflate(R.layout.gallery_fragment, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         contentInfoProvider = new ContentInfoProvider();
-        imageModels = getAllImages();
         initRecyclerView(view);
         initAdapter();
         initCamera(view);
@@ -66,7 +63,7 @@ public class GalleryFragment extends Fragment {
     }
 
     private void initAdapter() {
-        imageModels = getAllImages();
+        imageModels = getPagingImages();
         adapter = new GalleryAdapter(imageModels, getContext());
         recyclerView.setAdapter(adapter);
     }
@@ -79,12 +76,18 @@ public class GalleryFragment extends Fragment {
         });
     }
 
-    private List<ImageModel> getAllImages() {
+    private List<ImageModel> getPagingImages() {
         return contentInfoProvider.getImages(getContext().getContentResolver(), size, PAGING_SIZE);
     }
 
+    public void notifyItemInserted() {
+        List<ImageModel> models =contentInfoProvider.getAllImages(getContext().getContentResolver());
+        adapter.imageModels = models;
+        adapter.notifyItemInserted(models.size() - 1);
+    }
+
     public void notifyDataChanged() {
-        List<ImageModel> models = getAllImages();
+        List<ImageModel> models = getPagingImages();
         int startPosition = adapter.imageModels.size();
         adapter.imageModels.addAll(models);
         adapter.notifyItemRangeInserted(startPosition, models.size());
@@ -92,7 +95,7 @@ public class GalleryFragment extends Fragment {
 
     public boolean loadMoreData() {
         size += PAGING_SIZE;
-        List<ImageModel> data = getAllImages();
+        List<ImageModel> data = getPagingImages();
         if(data.size() == 0)
             return false;
         Toast.makeText(getContext(), "데이터 가져오는 중.", Toast.LENGTH_SHORT).show();

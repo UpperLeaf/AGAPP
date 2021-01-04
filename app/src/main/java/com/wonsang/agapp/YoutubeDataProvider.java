@@ -60,16 +60,21 @@ public class YoutubeDataProvider {
     }
 
     public void getDataByTitle(String query) {
-        if(!youtubeDataDao.isExist(query)){
+        if(youtubeDataDao.getCountByLikeTitle("%" + query + "%") < 5){
             requestData(query);
         }
         else{
-            YoutubeData latest = youtubeDataDao.getLatestBySearch(query);
+            YoutubeData latest = youtubeDataDao.findOneByLikeTitleOrderByColumnPublishedAtDesc("%" + query + "%");
             if(latest.getColumnPublishedAt().isBefore(LocalDateTime.now().minusHours(1)))
                 requestData(query);
             else
                 YoutubeDataManager.getInstance().notifyDataFetched(query);
         }
+    }
+
+    public List<YoutubeData> findAllContainsTitle(String title) {
+        String query = "%" + title + "%";
+        return youtubeDataDao.findAllByContainsTitle(query);
     }
 
     public void requestData(String query){
