@@ -12,7 +12,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -70,20 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         this.pager2.setAdapter(adapter);
         initializeTabLayout();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == GalleryFragment.CAMERA_INTENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Bitmap photo= (Bitmap)data.getExtras().get("data");
-            saveImage(photo);
-            galleryFragment.notifyItemInserted();
-        }
-    }
-
-    private void saveImage(Bitmap bitmap){
-        MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, new Date().toString(), getString(R.string.app_name));
     }
 
     private void initializeTabLayout() {

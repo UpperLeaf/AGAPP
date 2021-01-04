@@ -2,21 +2,17 @@ package com.wonsang.agapp.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,9 +51,8 @@ public class GalleryFragment extends Fragment {
         contentInfoProvider = new ContentInfoProvider();
         initRecyclerView(view);
         initAdapter();
-        initCamera(view);
-
     }
+
 
     private void initRecyclerView(@NonNull View view) {
         recyclerView = view.findViewById(R.id.gallery_recycler_view);
@@ -67,30 +62,17 @@ public class GalleryFragment extends Fragment {
     }
 
     private void initAdapter() {
+        size = 0;
         imageModels = getPagingImages();
         size = imageModels.size();
         adapter = new GalleryAdapter(imageModels, getContext());
         recyclerView.setAdapter(adapter);
     }
 
-    private void initCamera(@NonNull View view) {
-        Button cameraButton = view.findViewById(R.id.cameraButton);
-        cameraButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            getActivity().startActivityForResult(intent, CAMERA_INTENT_REQUEST_CODE);
-        });
-    }
-
     private List<ImageModel> getPagingImages() {
         return contentInfoProvider.getImages(getContext().getContentResolver(), size, PAGING_SIZE);
     }
 
-    public void notifyItemInserted() {
-//        List<ImageModel> models = contentInfoProvider.getAllImages(getContext().getContentResolver());
-//        adapter.imageModels.add(0, models.get(0));
-//        size++;
-//        adapter.notifyItemInserted(0);
-    }
 
     public void notifyDataChanged() {
         List<ImageModel> models = getPagingImages();
