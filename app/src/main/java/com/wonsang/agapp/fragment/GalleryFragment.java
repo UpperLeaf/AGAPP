@@ -1,5 +1,6 @@
 package com.wonsang.agapp.fragment;
 
+import android.app.Dialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +18,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.wonsang.agapp.R;
+import com.wonsang.agapp.dialog.ImageDialog;
 import com.wonsang.agapp.listener.RecyclerViewScrollListener;
 import com.wonsang.agapp.model.ImageModel;
 import com.wonsang.agapp.utils.ContentInfoProvider;
@@ -56,6 +59,7 @@ public class GalleryFragment extends Fragment {
         initRecyclerView(view);
         initAdapter();
         initCamera(view);
+
     }
 
     private void initRecyclerView(@NonNull View view) {
@@ -123,10 +127,16 @@ public class GalleryFragment extends Fragment {
             for(int i = 0; i < CARD_IMAGE_NUMBER; i++){
                 if (imageModels.size() > position * CARD_IMAGE_NUMBER + i){
                     imageViews.get(i).setVisibility(View.VISIBLE);
+                    Uri imageUri = imageModels.get(position * CARD_IMAGE_NUMBER + i).getPath();
                     Glide.with(context)
-                            .load(imageModels.get(position * CARD_IMAGE_NUMBER + i).getPath())
+                            .load(imageUri)
                             .centerCrop()
                             .into(imageViews.get(i));
+                    imageViews.get(i).setOnClickListener(v -> {
+                        Dialog dialog = new ImageDialog(context, imageUri);
+                        dialog.setCancelable(true);
+                        dialog.show();
+                    });
                 }
                 else {
                     imageViews.get(i).setVisibility(View.INVISIBLE);
@@ -148,6 +158,7 @@ public class GalleryFragment extends Fragment {
             imageViews = new ArrayList<>();
             imageViews.add(view.findViewById(R.id.gallery_imageView_item1));
             imageViews.add(view.findViewById(R.id.gallery_imageView_item2));
+
         }
         public List<ImageView> getImageViews() {
             return imageViews;
