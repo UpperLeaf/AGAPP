@@ -32,13 +32,25 @@ public class ContentInfoProvider {
 
                 Cursor phoneNumCur = resolver
                         .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
+                Cursor emailCur = resolver
+                        .query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
+                Cursor groupCur = resolver
+                        .query(ContactsContract.Groups.CONTENT_URI, null, ContactsContract.Groups.SOURCE_ID + " = ?", new String[]{String.valueOf(id)}, null);
 
                 List<String> phoneNumbers = new ArrayList<>();
                 while (phoneNumCur.moveToNext()) {
                     String phoneNo = phoneNumCur.getString(phoneNumCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     phoneNumbers.add(phoneNo);
                 }
-                users.add(new UserModel(name, phoneNumbers, photoUri));
+                String email = "";
+                String group = "";
+                if(emailCur.moveToNext()){
+                    email = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                }
+                if(groupCur.moveToNext()){
+                    group = groupCur.getString(groupCur.getColumnIndex(ContactsContract.Groups.SOURCE_ID));
+                }
+                users.add(new UserModel(name, phoneNumbers, photoUri, email, group));
 
                 Cursor imageCur = resolver.query(photoUri, new String[]{ContactsContract.Contacts.PHOTO_URI}, null, null, null);
 

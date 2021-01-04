@@ -1,5 +1,6 @@
 package com.wonsang.agapp.fragment;
 
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -29,13 +30,16 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.wonsang.agapp.R;
+import com.wonsang.agapp.dialog.AddressDialog;
 import com.wonsang.agapp.dialog.ContactDialog;
+import com.wonsang.agapp.dialog.ImageDialog;
 import com.wonsang.agapp.model.UserModel;
 import com.wonsang.agapp.utils.ContentInfoProvider;
 
@@ -49,6 +53,7 @@ public class AddressFragment extends Fragment {
     private Button contactAddButton;
     private RecyclerView recyclerView;
     private ContentInfoProvider contentInfoProvider;
+    private UserModel userModel;
     private AddressAdapter adapter;
 
     @Nullable
@@ -105,7 +110,7 @@ public class AddressFragment extends Fragment {
         return contentInfoProvider.getAllUsers(Objects.requireNonNull(getContext()).getContentResolver());
     }
 
-    static class AddressAdapter extends RecyclerView.Adapter<AddressViewHolder> {
+    class AddressAdapter extends RecyclerView.Adapter<AddressViewHolder> {
         private List<AddressViewHolder> addressViewHolders;
         private List<UserModel> users;
         private Context context;
@@ -135,6 +140,14 @@ public class AddressFragment extends Fragment {
                     .load(user.getPhotoUri())
                     .placeholder(R.drawable.blank_person)
                     .into(holder.getImageView());
+            holder.addressView.setOnClickListener(v -> {
+                AddressDialog dialog = new AddressDialog(getContext(), user);
+                dialog.setCancelable(true);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.getWindow().setGravity(Gravity.CENTER);
+                dialog.show();
+            });
+
         }
 
         @Override
@@ -159,11 +172,14 @@ public class AddressFragment extends Fragment {
         private final TextView phoneNumber;
         private final ImageView imageView;
 
+        private final CardView addressView;
+
         public AddressViewHolder(@NonNull View view) {
             super(view);
             this.name = view.findViewById(R.id.name);
             this.phoneNumber = view.findViewById(R.id.phoneNumber);
             this.imageView = view.findViewById(R.id.contact_image_view);
+            this.addressView = view.findViewById(R.id.address_card_view);
         }
 
         public TextView getName() {
