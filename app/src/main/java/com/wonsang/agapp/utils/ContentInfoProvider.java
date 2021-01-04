@@ -54,9 +54,10 @@ public class ContentInfoProvider {
 
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
-        Cursor cursor = resolver.query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC limit " + size);
+        int requestSize = size + pageSize;
+        Cursor cursor = resolver.query(uri, projection, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC limit " + requestSize);
 
-        cursor.moveToPosition(size - pageSize - 1);
+        cursor.moveToPosition(size - 1);
         while(cursor.moveToNext()){
             long id = cursor.getLong(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
             Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
