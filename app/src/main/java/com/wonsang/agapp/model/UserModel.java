@@ -11,12 +11,11 @@ public class UserModel {
     private String email;
     private String group;
 
-    public UserModel(String name, List<String> phoneNumber, Uri photoUri, String email, String group) {
+    public UserModel(String name, List<String> phoneNumber, Uri photoUri, String email) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.photoUri = photoUri;
         this.email = email;
-        this.group = group;
     }
 
     public Uri getPhotoUri() {
@@ -39,6 +38,4 @@ public class UserModel {
     }
     public void setEmail(String email) { this.email = email; }
     public String getEmail() { return email; }
-    public void setGroup(String group) { this.group = group; }
-    public String getGroup() { return group; }
 }

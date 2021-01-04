@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 
@@ -34,8 +35,6 @@ public class ContentInfoProvider {
                         .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
                 Cursor emailCur = resolver
                         .query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
-                Cursor groupCur = resolver
-                        .query(ContactsContract.Groups.CONTENT_URI, null, ContactsContract.Groups.SOURCE_ID + " = ?", new String[]{String.valueOf(id)}, null);
 
                 List<String> phoneNumbers = new ArrayList<>();
                 while (phoneNumCur.moveToNext()) {
@@ -43,14 +42,11 @@ public class ContentInfoProvider {
                     phoneNumbers.add(phoneNo);
                 }
                 String email = "";
-                String group = "";
+                String company = "";
                 if(emailCur.moveToNext()){
                     email = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                 }
-                if(groupCur.moveToNext()){
-                    group = groupCur.getString(groupCur.getColumnIndex(ContactsContract.Groups.SOURCE_ID));
-                }
-                users.add(new UserModel(name, phoneNumbers, photoUri, email, group));
+                users.add(new UserModel(name, phoneNumbers, photoUri, email));
 
                 Cursor imageCur = resolver.query(photoUri, new String[]{ContactsContract.Contacts.PHOTO_URI}, null, null, null);
 

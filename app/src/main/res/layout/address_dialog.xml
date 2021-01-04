@@ -26,8 +26,7 @@
                 <ImageView
                     android:id="@+id/address_image"
                     android:layout_width="50dp"
-                    android:layout_height="50dp">
-                </ImageView>
+                    android:layout_height="62dp"></ImageView>
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
@@ -49,14 +48,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/address_phoneNumber"
-                    android:textSize="13sp"
-                    android:fontFamily="@font/nanumnarunpend"
-                    android:textColor="@color/weak_black" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/address_group"
                     android:textSize="13sp"
                     android:fontFamily="@font/nanumnarunpend"
                     android:textColor="@color/weak_black" />

@@ -22,7 +22,6 @@ public class AddressDialog extends Dialog {
     private TextView name;
     private TextView phoneNo;
     private TextView email;
-    private TextView group;
     private UserModel userModel;
     public AddressDialog(@NonNull Context context, UserModel userModel) {
         super(context);
@@ -44,12 +43,10 @@ public class AddressDialog extends Dialog {
         name = findViewById(R.id.address_name);
         phoneNo = findViewById(R.id.address_phoneNumber);
         email = findViewById(R.id.address_email);
-        group = findViewById(R.id.address_group);
         Glide.with(getContext()).load(userModel.getPhotoUri()).placeholder(R.drawable.blank_person).into(imageView);
         name.setText(userModel.getName());
         phoneNo.setText(userModel.getPhoneNumber().get(0));
         email.setText(userModel.getEmail());
-        group.setText(userModel.getGroup());
     }
 
     private void setWindowAsBehind() {
