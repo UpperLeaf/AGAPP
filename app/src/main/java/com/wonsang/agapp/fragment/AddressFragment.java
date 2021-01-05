@@ -1,22 +1,13 @@
 package com.wonsang.agapp.fragment;
 
-import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,7 +29,6 @@ import com.bumptech.glide.Glide;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.dialog.AddressDialog;
 import com.wonsang.agapp.dialog.ContactDialog;
-import com.wonsang.agapp.dialog.ImageDialog;
 import com.wonsang.agapp.model.UserModel;
 import com.wonsang.agapp.utils.ContentInfoProvider;
 
@@ -133,6 +122,7 @@ public class AddressFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
             UserModel user = users.get(position);
+            contentInfoProvider = new ContentInfoProvider();
 
             holder.getName().setText(user.getName());
             holder.getPhoneNumber().setText(user.getPhoneNumber().get(0));
@@ -141,11 +131,15 @@ public class AddressFragment extends Fragment {
                     .placeholder(R.drawable.blank_person)
                     .into(holder.getImageView());
             holder.addressView.setOnClickListener(v -> {
-                AddressDialog dialog = new AddressDialog(getContext(), user);
+                AddressDialog dialog = new AddressDialog(getContext(), user, contentInfoProvider);
                 dialog.setCancelable(true);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.getWindow().setGravity(Gravity.CENTER);
                 dialog.show();
+                dialog.setOnDismissListener(dialog1 -> {
+                    if (dialog.isFetched())
+                        notifyDataChanged();
+                });
             });
 
         }

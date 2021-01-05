@@ -3,6 +3,7 @@ package com.wonsang.agapp.utils;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -41,8 +42,7 @@ public class ContentInfoProvider {
                     String phoneNo = phoneNumCur.getString(phoneNumCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     phoneNumbers.add(phoneNo);
                 }
-                String email = "";
-                String company = "";
+                String email = "None";
                 if(emailCur.moveToNext()){
                     email = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                 }
@@ -91,7 +91,28 @@ public class ContentInfoProvider {
         return imageModels;
     }
 
-    public boolean addContactInfo(ContentResolver resolver, String name ,String phoneNumber) {
+    static String GetContactIdWithPhoneNo(ContentResolver resolver, String phoneNumber){
+        String contactId = null;
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+        String[] projection = new String[]{ContactsContract.PhoneLookup._ID};
+        Cursor deleteCursor = resolver.query(uri, projection, null, null, null);
+        if(deleteCursor!=null){
+            while(deleteCursor.moveToNext()){
+                contactId = deleteCursor.getString(deleteCursor.getColumnIndex(ContactsContract.PhoneLookup._ID));
+            }
+            deleteCursor.close();
+        }
+        return contactId;
+    }
+
+    public boolean deleteContactInfo(ContentResolver resolver, String phoneNumber) {
+        String contactId = GetContactIdWithPhoneNo(resolver, phoneNumber);
+        resolver.delete(ContactsContract.RawContacts.CONTENT_URI, ContactsContract.RawContacts.CONTACT_ID + " = " + contactId, null);
+        return true;
+    }
+
+
+    public boolean addContactInfo(ContentResolver resolver, String name, String phoneNumber, String email) {
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
                 .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
@@ -113,6 +134,13 @@ public class ContentInfoProvider {
                 .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
                 .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
                         ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                .build());
+
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, email)
+                .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_MOBILE)
                 .build());
 
         try {

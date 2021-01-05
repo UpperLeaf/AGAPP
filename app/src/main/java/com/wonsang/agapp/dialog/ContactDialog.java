@@ -28,6 +28,7 @@ public class ContactDialog extends Dialog {
 
     private EditText nameText;
     private EditText phoneNumberText;
+    private EditText emailText;
     private Button contactAddButton;
     private ContentInfoProvider contentInfoProvider;
 
@@ -52,17 +53,23 @@ public class ContactDialog extends Dialog {
 
         nameText = findViewById(R.id.contact_dialog_name);
         phoneNumberText = findViewById(R.id.contact_dialog_phone);
+        emailText = findViewById(R.id.contact_dialog_email);
         phoneNumberText.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         contactAddButton = findViewById(R.id.contact_add_button);
         contactAddButton.setOnClickListener((v) -> {
             String name = nameText.getText().toString();
             String phoneNumber = phoneNumberText.getText().toString();
+            String email = emailText.getText().toString();
+            email = email.trim();
+            if(email.getBytes().length<=0){
+                email = "None";
+            }
 
             if(name.isEmpty() || phoneNumber.isEmpty()) {
                 Toast.makeText(getContext(), "이름이나 핸드폰 번호는 비어있을 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
-            isFetched = contentInfoProvider.addContactInfo(getContext().getContentResolver(), name, phoneNumber);
+            isFetched = contentInfoProvider.addContactInfo(getContext().getContentResolver(), name, phoneNumber, email);
             dismiss();
         });
     }

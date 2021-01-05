@@ -43,6 +43,18 @@
         android:fontFamily="@font/nanumnarunpend"
         android:inputType="phone" />
 
+    <EditText
+        android:id="@+id/contact_dialog_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="email"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/nanumnarunpend"
+        android:inputType="textEmailAddress" />
+
     <Button
         android:id="@+id/contact_add_button"
         android:layout_width="match_parent"
