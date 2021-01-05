@@ -1,6 +1,7 @@
 package com.wonsang.agapp;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,14 +30,30 @@ public class YoutubeDataProvider {
     private static final String channelRequestUrl = "https://www.googleapis.com/youtube/v3/channels?";
     private static final String searchRequestUrl = "https://www.googleapis.com/youtube/v3/search?";
 
-    public YoutubeDataProvider(String key, Context context) {
+    private static YoutubeDataProvider youtubeDataProvider;
+
+    private YoutubeDataProvider(String key, Context context) {
         this.apiKey = key;
         this.requestQueue = Volley.newRequestQueue(context);
         this.youtubeDataDao = YoutubeDatabase.getInstance(context).youtubeDataDao();
     }
 
+    public static YoutubeDataProvider createInstance(String key, Context context){
+        if(youtubeDataProvider == null)
+            youtubeDataProvider = new YoutubeDataProvider(key, context);
+        return youtubeDataProvider;
+    }
+
+    public static YoutubeDataProvider getInstance() {
+        return youtubeDataProvider;
+    }
+
     public YoutubeData getLatestYoutubeData() {
         return youtubeDataDao.getLatest();
+    }
+
+    public List<YoutubeData> getWillWatchYoutubeData() {
+        return youtubeDataDao.findAllByWillWatchOrderByPublishedAtDesc();
     }
 
     private StringBuilder createUrlBuilder(String requestUrl) {
@@ -103,6 +120,23 @@ public class YoutubeDataProvider {
                 new ErrorListener());
         requestQueue.add(request);
         return youtubeData;
+    }
+
+    public List<YoutubeData> findAllPlayListOrderByDesc(){
+        return youtubeDataDao.findAllByPlayListOrderByPublishedAtDesc();
+    }
+
+    public void updateAddWillWatchVideo(String videoId) {
+        youtubeDataDao.updateWillWatch(videoId, 1);
+    }
+    public void updateRemoveWillWatchVideo(String videoId) {
+        youtubeDataDao.updateWillWatch(videoId, 0);
+    }
+    public void updateAddPlayList(String videoId) {
+        youtubeDataDao.updatePlayList(videoId, 1);
+    }
+    public void updateRemovePlayList(String videoId){
+        youtubeDataDao.updatePlayList(videoId, 0);
     }
 
 

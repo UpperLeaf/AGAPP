@@ -1,39 +1,29 @@
 package com.wonsang.agapp.fragment;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Camera;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import com.bumptech.glide.Glide;
-import com.wonsang.agapp.MainActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.YoutubeDataProvider;
+import com.wonsang.agapp.YoutubePlayListActivity;
 import com.wonsang.agapp.YoutubePlayerActivity;
 import com.wonsang.agapp.dao.YoutubeDataDao;
 import com.wonsang.agapp.dao.YoutubeDatabase;
@@ -56,9 +46,13 @@ import java.util.Observer;
 public class YoutubeFragment extends Fragment implements Observer {
 
     private SearchView searchView;
+    private SearchViewTextListener textListener;
     private RecyclerView recyclerView;
     private YoutubeDataProvider youtubeDataProvider;
+    private YoutubeAdapter youtubeAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private FloatingActionButton actionButton;
+    private FloatingActionButton playListButton;
 
     @Nullable
     @Override
@@ -70,16 +64,43 @@ public class YoutubeFragment extends Fragment implements Observer {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.findViewById(R.id.search_view);
-        searchView = view.findViewById(R.id.search_view);
-        youtubeDataProvider = new YoutubeDataProvider(getString(R.string.youtube_api_key), getContext());
-        searchView.setOnQueryTextListener(new SearchViewTextListener(youtubeDataProvider));
+        youtubeDataProvider = YoutubeDataProvider.createInstance(getString(R.string.youtube_api_key), getContext());
+
 
         recyclerView = view.findViewById(R.id.youtube_recycler_view);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new YoutubeAdapter(getContext(), youtubeDataProvider));
+        youtubeAdapter = new YoutubeAdapter(getContext(), youtubeDataProvider);
+        recyclerView.setAdapter(youtubeAdapter);
+
+        searchView = view.findViewById(R.id.search_view);
+        textListener = new SearchViewTextListener(youtubeDataProvider, youtubeAdapter);
+        searchView.setOnQueryTextListener(textListener);
+
+        actionButton = view.findViewById(R.id.will_watch_list_fab);
+        actionButton.setOnClickListener(v -> youtubeAdapter.initAsWillWatchYoutubeData());
+
+        playListButton = view.findViewById(R.id.play_list_fab);
+        playListButton.setOnClickListener(v -> {
+            Context context = getContext();
+            ArrayList<YoutubeData> data = (ArrayList<YoutubeData>)youtubeDataProvider.findAllPlayListOrderByDesc();
+            Intent intent = new Intent(context, YoutubePlayListActivity.class);
+            intent.putExtra("youtubeData", data);
+            context.startActivity(intent);
+        });
 
         YoutubeDataManager.getInstance().addObserver(this);
+    }
+
+    @Override
+    public void onResume() {
+        reload();
+        super.onResume();
+    }
+
+    public void reload(){
+        String query = textListener.getQuery();
+        ((YoutubeAdapter)recyclerView.getAdapter()).reload(query);
     }
 
     @Override
@@ -93,13 +114,21 @@ public class YoutubeFragment extends Fragment implements Observer {
 
     static class SearchViewTextListener implements SearchView.OnQueryTextListener {
         private final YoutubeDataProvider dataProvider;
+        private final YoutubeAdapter adapter;
+        private String query;
+        SearchViewTextListener(YoutubeDataProvider youtubeDataProvider, YoutubeAdapter adapter) {
+            this.dataProvider = youtubeDataProvider;
+            this.adapter = adapter;
+            this.query = "";
+        }
 
-        SearchViewTextListener(YoutubeDataProvider youtubeDataProvider) {
-            dataProvider = youtubeDataProvider;
+        public String getQuery() {
+            return query;
         }
 
         @Override
         public boolean onQueryTextSubmit(String query) {
+            this.query = query;
             dataProvider.getDataByTitle(query);
             return true;
         }
@@ -112,15 +141,27 @@ public class YoutubeFragment extends Fragment implements Observer {
 
     static class YoutubeAdapter extends RecyclerView.Adapter<YoutubeViewHolder> {
         private List<YoutubeData> youtubeData;
+        private YoutubeDataProvider dataProvider;
         private Context context;
 
         YoutubeAdapter(Context context, YoutubeDataProvider youtubeDataProvider) {
             this.context = context;
-            this.youtubeData = new ArrayList<>();
-            YoutubeData data = youtubeDataProvider.getLatestYoutubeData();
-            if (data != null) {
-                this.youtubeData = youtubeDataProvider.findBySearchValue(data.getSearchValue());
-            }
+            this.dataProvider = youtubeDataProvider;
+            this.youtubeData = youtubeDataProvider.getWillWatchYoutubeData();
+        }
+
+        public void initAsWillWatchYoutubeData() {
+            this.youtubeData = dataProvider.getWillWatchYoutubeData();
+            notifyDataSetChanged();
+        }
+
+
+        public void reload(String query) {
+            if(query.isEmpty())
+                this.youtubeData = dataProvider.getWillWatchYoutubeData();
+            else
+                this.youtubeData = dataProvider.findAllContainsTitle(query);
+            notifyDataSetChanged();
         }
 
         @NonNull
@@ -146,6 +187,8 @@ public class YoutubeFragment extends Fragment implements Observer {
                 intent.putExtra("videoTitle", data.getTitle());
                 intent.putExtra("description", data.getDescription());
                 intent.putExtra("channelImageUrl", data.getChannelImageUrl());
+                intent.putExtra("isWillWatch", data.isWillWatch());
+                intent.putExtra("isPlayList", data.isFavoriteList());
                 context.startActivity(intent);
             });
         }

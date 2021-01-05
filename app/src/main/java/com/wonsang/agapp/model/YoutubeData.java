@@ -5,12 +5,13 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Entity(tableName = "youtube_data", indices = {@Index(value = "video_id", unique = true)})
-public class YoutubeData{
+public class YoutubeData implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -51,6 +52,11 @@ public class YoutubeData{
     @ColumnInfo(name = "channel_description")
     private String channelDescription;
 
+    @ColumnInfo(name = "is_will_watch")
+    private boolean isWillWatch;
+
+    @ColumnInfo(name = "is_favorite_list")
+    private boolean isFavoriteList;
 
     public YoutubeData(LocalDateTime publishedAt, String videoId, String title, String channelTitle, String description, String previewImageUrl, String channelId, String searchValue){
         this.publishedAt = publishedAt;
@@ -61,8 +67,11 @@ public class YoutubeData{
         this.previewImageUrl = previewImageUrl;
         this.channelId = channelId;
         this.searchValue = searchValue;
+        this.isWillWatch = false;
     }
-
+    public void setWillWatch(boolean willWatch) {
+        isWillWatch = willWatch;
+    }
     public void setColumnPublishedAt(LocalDateTime now) {
         this.columnPublishedAt = now;
     }
@@ -109,7 +118,16 @@ public class YoutubeData{
     public void setSearchValue(String searchValue) {
         this.searchValue = searchValue;
     }
+    public void setFavoriteList(boolean favoriteList) {
+        isFavoriteList = favoriteList;
+    }
 
+    public boolean isFavoriteList() {
+        return isFavoriteList;
+    }
+    public boolean isWillWatch() {
+        return isWillWatch;
+    }
     public LocalDateTime getColumnPublishedAt() {
         return columnPublishedAt;
     }

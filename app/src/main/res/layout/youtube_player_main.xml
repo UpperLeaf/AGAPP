@@ -59,4 +59,19 @@
         android:paddingHorizontal="5dp"
         android:textAlignment="textEnd">
     </TextView>
+    <Button
+        android:id="@+id/will_video_list_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/nanumnarunpend" />
+
+    <Button
+        android:id="@+id/play_list_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="5dp"
+        android:fontFamily="@font/nanumnarunpend" />
 </LinearLayout>
