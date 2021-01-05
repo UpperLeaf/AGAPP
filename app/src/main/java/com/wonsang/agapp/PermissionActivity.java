@@ -17,7 +17,6 @@ public class PermissionActivity extends AppCompatActivity {
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_CONTACTS,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.CAMERA
     };
 
@@ -25,20 +24,7 @@ public class PermissionActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.permission_main);
-
-        if(!hasPermissions())
-            initializeGrant();
-        else
-            intentMainActivity();
-
-    }
-
-    private boolean hasPermissions() {
-        for(String permission : PERMISSIONS) {
-            if(ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED)
-                return false;
-        }
-        return true;
+        initializeGrant();
     }
 
     private void initializeGrant() {

@@ -33,7 +33,6 @@ public class YoutubePlayListActivity extends AppCompatActivity {
     private List<YoutubeData> youtubeDataList;
     private YoutubePlayerStateChangedListener listener;
     private RecyclerView playListView;
-    private YouTubePlayer youTubePlayer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
