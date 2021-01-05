@@ -27,6 +27,10 @@ public class PermissionActivity extends AppCompatActivity {
         initializeGrant();
     }
 
+    @Override
+    public void onBackPressed() {
+    }
+
     private void initializeGrant() {
         ActivityCompat.requestPermissions(this, PERMISSIONS, 100);
     }

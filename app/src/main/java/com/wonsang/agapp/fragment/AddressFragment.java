@@ -42,7 +42,6 @@ public class AddressFragment extends Fragment {
     private Button contactAddButton;
     private RecyclerView recyclerView;
     private ContentInfoProvider contentInfoProvider;
-    private UserModel userModel;
     private AddressAdapter adapter;
 
     @Nullable
@@ -100,12 +99,10 @@ public class AddressFragment extends Fragment {
     }
 
     class AddressAdapter extends RecyclerView.Adapter<AddressViewHolder> {
-        private List<AddressViewHolder> addressViewHolders;
         private List<UserModel> users;
         private Context context;
 
         AddressAdapter(Context context, List<UserModel> users){
-            this.addressViewHolders = new ArrayList<>();
             this.users = users;
             this.context = context;
         }
@@ -115,7 +112,6 @@ public class AddressFragment extends Fragment {
         public AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(context).inflate(R.layout.address_card, parent, false);
             AddressViewHolder viewHolder = new AddressViewHolder(view);
-            addressViewHolders.add(viewHolder);
             return viewHolder;
         }
 
@@ -151,8 +147,8 @@ public class AddressFragment extends Fragment {
 
         public int searchPositionByName(String name) {
             int position = -1;
-            for(int i = 0; i < addressViewHolders.size(); i++){
-                if(addressViewHolders.get(i).getUserName().contains(name)){
+            for(int i = 0; i < users.size(); i++){
+                if(users.get(i).getName().contains(name)){
                     position = i;
                     break;
                 }

@@ -78,7 +78,10 @@ public class YoutubeFragment extends Fragment implements Observer {
         searchView.setOnQueryTextListener(textListener);
 
         actionButton = view.findViewById(R.id.will_watch_list_fab);
-        actionButton.setOnClickListener(v -> youtubeAdapter.initAsWillWatchYoutubeData());
+        actionButton.setOnClickListener(v -> {
+            youtubeAdapter.initAsWillWatchYoutubeData();
+            textListener.setQuery("");
+        });
 
         playListButton = view.findViewById(R.id.play_list_fab);
         playListButton.setOnClickListener(v -> {
@@ -116,6 +119,8 @@ public class YoutubeFragment extends Fragment implements Observer {
         private final YoutubeDataProvider dataProvider;
         private final YoutubeAdapter adapter;
         private String query;
+
+
         SearchViewTextListener(YoutubeDataProvider youtubeDataProvider, YoutubeAdapter adapter) {
             this.dataProvider = youtubeDataProvider;
             this.adapter = adapter;
@@ -124,6 +129,9 @@ public class YoutubeFragment extends Fragment implements Observer {
 
         public String getQuery() {
             return query;
+        }
+        public void setQuery(String query) {
+            this.query = query;
         }
 
         @Override
