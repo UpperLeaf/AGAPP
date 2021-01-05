@@ -98,7 +98,7 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         youTubePlayerView.play(videoId, new YouTubePlayerView.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                listener = new YoutubePlayerStateChangedListener(youTubePlayer);
+                listener = new YoutubePlayerStateChangedListener(youTubePlayer, youtubeDataProvider, videoId);
                 youTubePlayer.setPlayerStateChangeListener(listener);
                 youTubePlayer.setOnFullscreenListener(new YoutubePlayerFullScreenListener(activity));
             }
@@ -112,9 +112,12 @@ public class YoutubePlayerActivity extends AppCompatActivity {
 
     static class YoutubePlayerStateChangedListener implements YouTubePlayer.PlayerStateChangeListener{
         private YouTubePlayer youTubePlayer;
-
-        YoutubePlayerStateChangedListener(YouTubePlayer youTubePlayer){
+        private YoutubeDataProvider dataProvider;
+        private String videoId;
+        YoutubePlayerStateChangedListener(YouTubePlayer youTubePlayer, YoutubeDataProvider youtubeDataProvider, String videoId){
             this.youTubePlayer = youTubePlayer;
+            this.dataProvider = youtubeDataProvider;
+            this.videoId = videoId;
         }
         @Override
         public void onLoading() {
@@ -134,7 +137,7 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         }
         @Override
         public void onVideoEnded() {
-
+            dataProvider.updateRemoveWillWatchVideo(videoId);
         }
         @Override
         public void onError(YouTubePlayer.ErrorReason errorReason) {
