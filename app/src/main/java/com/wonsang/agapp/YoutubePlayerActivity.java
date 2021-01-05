@@ -32,12 +32,15 @@ public class YoutubePlayerActivity extends AppCompatActivity {
     private TextView videoPublishedAt;
     private ImageView channelImage;
     private Button willWatchVideoButton;
+    private Button playListButton;
     private YoutubeDataProvider youtubeDataProvider;
     private Activity activity = this;
 
     private YoutubePlayerStateChangedListener listener;
     private YoutubeVideoAddWillWatchListener addWillWatchListener;
     private YoutubeVideoRemoveWillWatchListener removeWillWatchListener;
+    private YoutubeVideoAddPlayListListener addPlayListListener;
+    private YoutubeVideoRemovePlayListListener removePlayListListener;
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -70,6 +73,7 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         videoPublishedAt.setText(intent.getStringExtra("publishedAt"));
 
         youtubeDataProvider = YoutubeDataProvider.getInstance();
+
         initListener(intent);
         startVideo(intent);
     }
@@ -89,6 +93,21 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         else {
             willWatchVideoButton.setText("내가 볼 동영상 목록에 추가하기");
             willWatchVideoButton.setOnClickListener(addWillWatchListener);
+        }
+
+        boolean isPlayList = intent.getExtras().getBoolean("isPlayList");
+        playListButton = findViewById(R.id.play_list_button);
+        addPlayListListener = new YoutubeVideoAddPlayListListener(youtubeDataProvider, intent.getStringExtra("videoId"), getApplicationContext());
+        removePlayListListener = new YoutubeVideoRemovePlayListListener(youtubeDataProvider, intent.getStringExtra("videoId"), getApplicationContext());
+        addPlayListListener.setRemovePlayListListener(removePlayListListener);
+        removePlayListListener.setAddPlayListListener(addPlayListListener);
+
+        if(!isPlayList){
+            playListButton.setText("재생목록에 추가하기");
+            playListButton.setOnClickListener(addPlayListListener);
+        }else {
+            playListButton.setText("재생목록에서 삭제하기");
+            playListButton.setOnClickListener(removePlayListListener);
         }
     }
 
@@ -161,7 +180,6 @@ public class YoutubePlayerActivity extends AppCompatActivity {
             }
         }
     }
-
     static class YoutubeVideoAddWillWatchListener implements View.OnClickListener {
         private YoutubeDataProvider youtubeDataProvider;
         private YoutubeVideoRemoveWillWatchListener removeWillWatchListener;
@@ -186,7 +204,6 @@ public class YoutubePlayerActivity extends AppCompatActivity {
             v.setOnClickListener(removeWillWatchListener);
         }
     }
-
     static class YoutubeVideoRemoveWillWatchListener implements View.OnClickListener {
         private YoutubeDataProvider youtubeDataProvider;
         private String videoId;
@@ -209,6 +226,52 @@ public class YoutubePlayerActivity extends AppCompatActivity {
             Toast.makeText(context, "내가 볼 동영상 목록에서 삭제되었습니다.", Toast.LENGTH_SHORT).show();
             ((Button)v).setText("내가 볼 동영상 목록에 추가하기");
             v.setOnClickListener(addWillWatchListener);
+        }
+    }
+    static class YoutubeVideoAddPlayListListener implements View.OnClickListener {
+        private YoutubeDataProvider youtubeDataProvider;
+        private YoutubeVideoRemovePlayListListener removePlayListListener;
+        private String videoId;
+        private Context context;
+
+        YoutubeVideoAddPlayListListener(YoutubeDataProvider youtubeDataProvider, String videoId, Context context) {
+            this.youtubeDataProvider =youtubeDataProvider;
+            this.videoId = videoId;
+            this.context = context;
+        }
+        public void setRemovePlayListListener(YoutubeVideoRemovePlayListListener removePlayListListener) {
+            this.removePlayListListener = removePlayListListener;
+        }
+
+        @Override
+        public void onClick(View v) {
+            youtubeDataProvider.updateAddPlayList(videoId);
+            Toast.makeText(context, "재생목록에 추가되었습니다.", Toast.LENGTH_SHORT).show();
+            ((Button)v).setText("재생목록에서 삭제하기");
+            v.setOnClickListener(removePlayListListener);
+        }
+    }
+    static class YoutubeVideoRemovePlayListListener implements View.OnClickListener {
+        private YoutubeDataProvider youtubeDataProvider;
+        private YoutubeVideoAddPlayListListener addPlayListListener;
+        private String videoId;
+        private Context context;
+
+        YoutubeVideoRemovePlayListListener(YoutubeDataProvider dataProvider, String videoId, Context context){
+            this.youtubeDataProvider = dataProvider;
+            this.videoId = videoId;
+            this.context = context;
+        }
+        public void setAddPlayListListener(YoutubeVideoAddPlayListListener addPlayListListener) {
+            this.addPlayListListener = addPlayListListener;
+        }
+
+        @Override
+        public void onClick(View v) {
+            youtubeDataProvider.updateRemovePlayList(videoId);
+            Toast.makeText(context, "재생목록에서 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+            ((Button)v).setText("재생목록에 추가하기");
+            v.setOnClickListener(addPlayListListener);
         }
     }
 }

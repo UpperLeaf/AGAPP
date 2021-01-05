@@ -122,12 +122,21 @@ public class YoutubeDataProvider {
         return youtubeData;
     }
 
+    public List<YoutubeData> findAllPlayListOrderByDesc(){
+        return youtubeDataDao.findAllByPlayListOrderByPublishedAtDesc();
+    }
+
     public void updateAddWillWatchVideo(String videoId) {
         youtubeDataDao.updateWillWatch(videoId, 1);
     }
-
     public void updateRemoveWillWatchVideo(String videoId) {
         youtubeDataDao.updateWillWatch(videoId, 0);
+    }
+    public void updateAddPlayList(String videoId) {
+        youtubeDataDao.updatePlayList(videoId, 1);
+    }
+    public void updateRemovePlayList(String videoId){
+        youtubeDataDao.updatePlayList(videoId, 0);
     }
 
 

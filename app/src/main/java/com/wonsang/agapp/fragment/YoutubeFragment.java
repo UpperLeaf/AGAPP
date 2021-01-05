@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.YoutubeDataProvider;
+import com.wonsang.agapp.YoutubePlayListActivity;
 import com.wonsang.agapp.YoutubePlayerActivity;
 import com.wonsang.agapp.dao.YoutubeDataDao;
 import com.wonsang.agapp.dao.YoutubeDatabase;
@@ -51,6 +52,7 @@ public class YoutubeFragment extends Fragment implements Observer {
     private YoutubeAdapter youtubeAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private FloatingActionButton actionButton;
+    private FloatingActionButton playListButton;
 
     @Nullable
     @Override
@@ -77,6 +79,15 @@ public class YoutubeFragment extends Fragment implements Observer {
 
         actionButton = view.findViewById(R.id.will_watch_list_fab);
         actionButton.setOnClickListener(v -> youtubeAdapter.initAsWillWatchYoutubeData());
+
+        playListButton = view.findViewById(R.id.play_list_fab);
+        playListButton.setOnClickListener(v -> {
+            Context context = getContext();
+            ArrayList<YoutubeData> data = (ArrayList<YoutubeData>)youtubeDataProvider.findAllPlayListOrderByDesc();
+            Intent intent = new Intent(context, YoutubePlayListActivity.class);
+            intent.putExtra("youtubeData", data);
+            context.startActivity(intent);
+        });
 
         YoutubeDataManager.getInstance().addObserver(this);
     }
@@ -177,6 +188,7 @@ public class YoutubeFragment extends Fragment implements Observer {
                 intent.putExtra("description", data.getDescription());
                 intent.putExtra("channelImageUrl", data.getChannelImageUrl());
                 intent.putExtra("isWillWatch", data.isWillWatch());
+                intent.putExtra("isPlayList", data.isFavoriteList());
                 context.startActivity(intent);
             });
         }

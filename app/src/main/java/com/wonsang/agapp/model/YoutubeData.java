@@ -5,12 +5,13 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 @Entity(tableName = "youtube_data", indices = {@Index(value = "video_id", unique = true)})
-public class YoutubeData{
+public class YoutubeData implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private long id;

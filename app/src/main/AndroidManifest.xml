@@ -29,6 +29,10 @@
         <activity android:name=".YoutubePlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize">
         </activity>
+
+        <activity android:name=".YoutubePlayListActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+        </activity>
     </application>
 
 </manifest>
