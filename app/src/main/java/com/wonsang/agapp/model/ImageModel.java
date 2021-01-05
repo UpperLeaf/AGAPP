@@ -1,5 +1,6 @@
 package com.wonsang.agapp.model;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
@@ -19,6 +20,7 @@ public class ImageModel {
         if(obj instanceof ImageModel){
             ImageModel imageModel = (ImageModel)obj;
             return path.equals(imageModel.getPath());
+
         }
         return false;
     }

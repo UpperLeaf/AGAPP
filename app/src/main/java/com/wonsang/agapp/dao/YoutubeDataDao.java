@@ -31,11 +31,17 @@ public interface YoutubeDataDao {
     @Query("SELECT * FROM youtube_data WHERE search_value = :search ORDER BY column_published_at DESC LIMIT 1")
     YoutubeData getLatestBySearch(String search);
 
+    @Query("SELECT * FROM youtube_data WHERE is_will_watch = 1 ORDER BY published_at DESC")
+    List<YoutubeData> findAllByWillWatchOrderByPublishedAtDesc();
+
     @Query("SELECT * FROM youtube_data ORDER BY column_published_at DESC LIMIT 1")
     YoutubeData getLatest();
 
     @Query("SELECT * FROM YOUTUBE_DATA WHERE video_title LIKE :title ORDER BY published_at DESC")
     List<YoutubeData> findAllByContainsTitle(String title);
+
+    @Query("UPDATE youtube_data SET is_will_watch = :willWatch WHERE video_id = :videoId")
+    void updateWillWatch(String videoId, int willWatch);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(YoutubeData youtubeData);
