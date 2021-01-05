@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 
@@ -42,7 +43,6 @@ public class YoutubePlayerActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         listener.onConfigurationChanged(newConfig);
-
     }
 
     @Override
@@ -140,7 +140,6 @@ public class YoutubePlayerActivity extends AppCompatActivity {
         public void onError(YouTubePlayer.ErrorReason errorReason) {
 
         }
-
         public void onConfigurationChanged(Configuration configuration){
             if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
                 youTubePlayer.setFullscreen(true);

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wonsang.agapp.R;
 import com.wonsang.agapp.YoutubeDataProvider;
 import com.wonsang.agapp.YoutubePlayerActivity;
@@ -49,6 +50,7 @@ public class YoutubeFragment extends Fragment implements Observer {
     private YoutubeDataProvider youtubeDataProvider;
     private YoutubeAdapter youtubeAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private FloatingActionButton actionButton;
 
     @Nullable
     @Override
@@ -72,6 +74,9 @@ public class YoutubeFragment extends Fragment implements Observer {
         searchView = view.findViewById(R.id.search_view);
         textListener = new SearchViewTextListener(youtubeDataProvider, youtubeAdapter);
         searchView.setOnQueryTextListener(textListener);
+
+        actionButton = view.findViewById(R.id.will_watch_list_fab);
+        actionButton.setOnClickListener(v -> youtubeAdapter.initAsWillWatchYoutubeData());
 
         YoutubeDataManager.getInstance().addObserver(this);
     }
